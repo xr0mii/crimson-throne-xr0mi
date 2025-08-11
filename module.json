@@ -2,55 +2,32 @@
   "id": "crimson-throne-xr0mi",
   "title": "Проклятие Багряного Трона",
   "version": "1.0.0",
-  "compatibility": {
-    "minimum": "13",
-    "verified": "13"
-  },
-  "flags": {
-    "canUpload": true
-  },
-  "description": "<p>Конвертация приключения \"Проклятие Багряного Трона\" от xr0mi с переводом на русский</p>",
-  "authors": [
-    {
-      "name": "xr0mi",
-      "url": "https://discord.gg/WfrmyyE3Y9",
-      "discord": "xr0mi",
-      "flags": {}
-    }
-  ],
+  "compatibility": { "minimum": "13", "verified": "13" },
+  "description": "Конвертация приключения \"Проклятие Багряного Трона\" от xr0mi с переводом на русский.",
+  "authors": [{ "name": "xr0mi", "url": "https://boosty.to/xr0mi" }],
   "url": "https://boosty.to/xr0mi",
+
+  "manifest": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/module.json",
+  "download": "https://github.com/xr0mii/crimson-throne-xr0mi/archive/refs/heads/main.zip",
+  "readme": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/README.md",
+  "changelog": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/CHANGELOG.md",
+
+  "flags": { "canUpload": true },
+
   "packs": [
     {
       "name": "crimson-throne-ru",
       "label": "Проклятие Багряного Трона",
       "path": "packs/crimson-throne-ru",
       "type": "Adventure",
-      "system": "pf2e",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      }
+      "system": "pf2e"
     }
   ],
   "relationships": {
-    "systems": [
-      {
-        "id": "pf2e",
-        "type": "system",
-        "compatibility": {}
-      }
-    ],
+    "systems": [{ "id": "pf2e", "type": "system" }],
     "requires": [
-      {
-        "id": "pf2e-token-pack",
-        "type": "module",
-        "compatibility": {}
-      },
-      {
-        "id": "levels",
-        "type": "module",
-        "compatibility": {}
-      }
+      { "id": "pf2e-token-pack", "type": "module" },
+      { "id": "levels", "type": "module" }
     ]
   }
 }
