@@ -26,8 +26,8 @@
   "relationships": {
     "systems": [{ "id": "pf2e", "type": "system" }],
     "requires": [
-      { "id": "pf2e-token-pack", "type": "module" },
-      { "id": "levels", "type": "module" }
+      { "id": "pf2e-token-pack", "type": "module", "manifest": "https://raw.githubusercontent.com/Metofay/pf2e-token-pack/main/module.json" },
+      { "id": "levels", "type": "module", "manifest": "https://github.com/theripper93/Levels/releases/download/6.0.15/module.json" }
     ]
   }
 }
