@@ -1,0 +1,336 @@
+/* ==== CRIMSON THRONE — JOURNAL STYLES ===================================== */
+@font-face {
+  font-family: "Oranienbaum";
+  src: url("../assets/fonts/oranienbaum-regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+000-5FF, U+400-4FF; /* латиница+кириллица */
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../assets/fonts/merriweather-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+000-5FF, U+400-4FF;
+}
+@font-face {
+  font-family: "Merriweather";
+  src: url("../assets/fonts/merriweather-700.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+000-5FF, U+400-4FF;
+}
+/* Глобальные переменные темы */
+.ct-wrapper {
+  --ct-paper:  #f6f1e8;   /* фон "бумаги" */
+  --ct-accent: #8c1b1b;   /* бордовый акцент */
+  --ct-ink:    #221a18;   /* цвет текста */
+  --ct-maxw:   980px;     /* ширина колонки текста */
+  /* палитра под цитаты */
+  --q-ink:   #fff7f4;
+  --q-bg1:   #3a0f12;   /* верх */
+  --q-bg2:   #5a1115;   /* низ */
+  --q-border:#b3262d;   /* лента/бордер */
+  --q-shadow: rgba(0,0,0,.35);
+
+  /* Толщина видимой рамки вокруг окна (в px) */
+  --frame-top:    220px;
+  --frame-right:  170px;
+  --frame-bottom: 220px;
+  --frame-left:   200px;
+
+  /* 9-slice срезы из PNG рамки (внутренняя граница рамки от краёв изображения) */
+  --slice-top:    480;
+  --slice-right:  376;
+  --slice-bottom: 440;
+  --slice-left:   460;
+
+  /* Выступ рамки за пределы окна (делает её "вокруг" окна, а не внутри) */
+  --frame-outset: 48px;
+  --font-head: "Oranienbaum", "Merriweather", Georgia, serif;
+  --font-body: "Merriweather", Georgia, serif;
+  --fs-body: clamp(15px, 1.15vw, 16.5px);
+  --fs-h1:   clamp(30px, 2.6vw, 38px);
+  --fs-h2:   clamp(22px, 2.0vw, 30px);
+  --fs-h3:   clamp(18px, 1.6vw, 22px);
+  --lh-body: 1.6;
+  --ct-maxw: 880px;
+  --img-radius: 10px;                      /* скругление */
+  --img-border: rgba(0,0,0,.15);           /* тонкая окантовка */
+  --img-shadow: 0 4px 16px rgba(0,0,0,.25);/* мягкая тень */
+  --div-img: url("../assets/frames/divider-h.png");
+  --div-shadow: 0 1px 0 rgba(0,0,0,.12);
+  --div-color:  #8c1b1b; /* для тонкой линии у h3 */
+}
+
+/* ---- Рамка вокруг всего окна журнала ------------------------------------ */
+/* ВАЖНО: не трогаем position у .journal-sheet (по умолчанию fixed)! */
+.journal-sheet.ct-wrapper::before {
+  content: "";
+  position: absolute;              /* позиционируется относительно окна (fixed-родителя) */
+  inset: calc(-1 * var(--frame-outset));
+  pointer-events: none;
+  z-index: 1;                      /* украшение ниже заголовка и контента */
+
+  border-style: solid;
+  border-width: var(--frame-top) var(--frame-right) var(--frame-bottom) var(--frame-left);
+
+  /* 9-slice рамки */
+  -webkit-border-image: url("../assets/frames/frame-9slice.png")
+    var(--slice-top) var(--slice-right) var(--slice-bottom) var(--slice-left) stretch;
+          border-image: url("../assets/frames/frame-9slice.png")
+    var(--slice-top) var(--slice-right) var(--slice-bottom) var(--slice-left) stretch;
+    border-image-repeat: round stretch;
+    filter:
+    drop-shadow(0 10px 24px rgba(0,0,0,.45))
+    drop-shadow(0 0 10px rgba(0,0,0,.35));
+}
+
+/* Слои окна, чтобы ничто не перекрывалось */
+.journal-sheet.ct-wrapper .window-header  { position: relative; z-index: 3; }
+.journal-sheet.ct-wrapper .window-content { position: relative; z-index: 2; }
+
+/* ---- Фон внутри окна (бордовый тайл) ------------------------------------ */
+.journal-sheet.ct-wrapper .window-content {
+  overflow: visible;
+  background: url("../assets/bg/crimson-tile.png") repeat;
+  background-size: 512px;
+}
+
+/* ---- "Бумага" страницы и типографика ------------------------------------ */
+/* Без привязки к .ct-doc, чтобы работало всегда */
+.journal-sheet.ct-wrapper .journal-page-content {
+  position: relative; z-index: 4;      /* выше бордового фона */
+  max-width: var(--ct-maxw);
+  margin: 24px auto;
+  padding: 24px 28px;
+  background: var(--ct-paper);
+  color: var(--ct-ink);
+  box-shadow: 0 4px 24px rgba(0,0,0,.25);
+  border: 1px solid rgba(0,0,0,.12);
+  line-height: 1.6;
+}
+
+/* заголовки, разделители, ссылки */
+.ct-wrapper .ct-doc .journal-entry-page { margin: 0 0 1rem; }
+
+.ct-wrapper .ct-doc h1 {
+  margin: .5rem 0 .6rem; padding: 0; border: none;
+  text-transform: uppercase; letter-spacing: .02em;
+  font-size: 28px; position: relative;
+}
+.ct-wrapper .ct-doc h1::after {
+  content:"";
+  position: absolute; left: 50%; transform: translateX(-50%);
+  bottom: -10px; height: 12px; width: 80%;
+  background: url("../assets/frames/divider-h.png") repeat-x center;
+  background-size: 138px 11px;
+  opacity: .9; filter: drop-shadow(0 1px 0 rgba(0,0,0,.15));
+}
+
+.ct-wrapper .ct-doc h2 { border: none; margin: .75rem 0 .25rem; font-size: 22px; }
+.ct-wrapper .ct-doc h3 { border: none; margin: .6rem 0 .25rem;  font-size: 19px; }
+.ct-wrapper .ct-doc a  { color: var(--ct-accent); }
+.ct-wrapper .ct-doc a:hover { text-decoration: underline; }
+
+/* Врезки/хенд-ауты (если используешь) */
+.ct-wrapper .ct-doc .ct-handout {
+  border: 24px solid transparent;
+  -o-border-image: url("../assets/frames/handout-border.png") 24/24px round;
+     border-image: url("../assets/frames/handout-border.png") 24/24px round;
+  padding: 12px 16px; margin: 1rem 0;
+}
+
+/* Таблицы, картинки сбоку и т.п. */
+
+.ct-wrapper .ct-doc table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+.ct-wrapper .ct-doc th { background: rgba(140,27,27,.15); text-align: left; padding: 8px; }
+.ct-wrapper .ct-doc td { border-top: 1px solid rgba(0,0,0,.08); padding: 8px; }
+
+.ct-wrapper .ct-doc .float-right { float: right; width: min(50%, 420px); margin: .25rem 0 .25rem .75rem; }
+.ct-wrapper .ct-doc .float-left  { float: left;  width: min(50%, 420px); margin: .25rem .75rem .25rem 0; }
+
+/* ---- Адаптив: чуть ужимаем толщину рамки на узких окнах ------------------ */
+@media (max-width: 1100px) {
+  .ct-wrapper {
+    --frame-top: 100px; --frame-right: 80px; --frame-bottom: 96px; --frame-left: 96px;
+  }
+}
+@media (max-width: 900px) {
+  .ct-wrapper {
+    --frame-top: 84px; --frame-right: 64px; --frame-bottom: 82px; --frame-left: 82px;
+  }
+}
+.journal-sheet.ct-wrapper::before { pointer-events: none; }
+
+/* Ручка ресайза всегда поверх */
+.journal-sheet.ct-wrapper .window-resizable-handle {
+  position: absolute;        /* на всякий */
+  z-index: 9999;             /* выше рамки и контента */
+  /* опционально сделай зону хвата комфортнее: */
+  width: 18px; height: 18px; /* Foundry обычно ~12px */
+  right: -9px; bottom: -9px; /* половина ширины/высоты наружу */
+}
+.journal-sheet.ct-wrapper .journal-page-content{
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+/* заголовки */
+.journal-sheet.ct-wrapper .journal-page-content h1{ font-size: var(--fs-h1); }
+.journal-sheet.ct-wrapper .journal-page-content h2{ font-size: var(--fs-h2); }
+.journal-sheet.ct-wrapper .journal-page-content h3{ font-size: var(--fs-h3); }
+
+/* чуть компактнее абзацы/списки */
+.journal-sheet.ct-wrapper .journal-page-content p{ margin: 0.65em 0; }
+.journal-sheet.ct-wrapper .journal-page-content ul,
+.journal-sheet.ct-wrapper .journal-page-content ol{ margin: 0.65em 0 0.65em 1.25em; }
+/* базовая цитата (работает на обычном >blockquote в редакторе) */
+.journal-sheet.ct-wrapper .journal-page-content blockquote{
+  position: relative;
+  margin: 0.9em 0;
+  padding: 12px 16px 12px 18px;
+  color: var(--q-ink);
+  background: linear-gradient(180deg, var(--q-bg1), var(--q-bg2));
+  border-radius: 8px;
+  box-shadow: 0 6px 18px var(--q-shadow);
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+/* левая "лента" */
+.journal-sheet.ct-wrapper .journal-page-content blockquote::before{
+  content:"";
+  position:absolute; inset: -1px auto -1px -10px;
+  width: 10px; border-radius: 6px 0 0 6px;
+  background: linear-gradient(180deg, #931b23, #6f1218);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
+/* внутренние отступы/маргины */
+.journal-sheet.ct-wrapper .journal-page-content blockquote p{ margin: 0.5em 0; }
+.journal-sheet.ct-wrapper .journal-page-content blockquote em{ color: #ffe6e1; }
+.journal-sheet.ct-wrapper .journal-page-content blockquote a{
+  color: #ffd0cc; text-decoration: underline;
+}
+/* общие правила для всех картинок на странице журнала */
+.journal-sheet.ct-wrapper .journal-page-content img{
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--img-radius);
+  background: #fff;                        /* чтобы PNG без фона не «пилил» край */
+  border: 1px solid var(--img-border);
+  box-shadow: var(--img-shadow);
+  margin: .5rem 0 .85rem;                  /* деликатные отступы */
+  vertical-align: middle;
+}
+/* Компактная цитата в потоке (вариант-пилюля) */
+.journal-sheet.ct-wrapper .journal-page-content .ct-quote-inline{
+  display: inline-block;
+  padding: 2px 6px; margin: 0 .2em;
+  background: rgba(145,23,30,.25);
+  border: 1px solid rgba(145,23,30,.45);
+  border-radius: 6px; color:#3a0f12;
+}
+/* Цитата не наезжает на плавающие изображения справа/слева */
+.journal-sheet.ct-wrapper .journal-page-content blockquote{
+  clear: both;           /* << ключ: встанет ниже float-картинок */
+  overflow: hidden;      /* скругления/тени не вылезают наружу */
+  position: relative;
+}
+
+/* Лента под контентом, а не над ним */
+.journal-sheet.ct-wrapper .journal-page-content blockquote::before{ z-index: 0; }
+.journal-sheet.ct-wrapper .journal-page-content blockquote > *{
+  position: relative; z-index: 1;
+}
+
+/* Если картинка ВНУТРИ цитаты — делаем аккуратный фрейм справа */
+.journal-sheet.ct-wrapper .journal-page-content blockquote img{
+  display: block;
+  max-width: 42%;
+  height: auto;
+  float: right;
+  margin: 4px 0 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  border: 1px solid rgba(255,255,255,.15);
+}
+
+/* На узких экранах картинка в цитате уходит под текст */
+@media (max-width: 720px){
+  .journal-sheet.ct-wrapper .journal-page-content blockquote img{
+    float: none; max-width: 100%; margin: 8px 0 0;
+  }
+}
+
+/* Если вдруг хочешь ИМЕННО обтекание цитатой (иногда нужно) — добавь класс .ct-wrap */
+.journal-sheet.ct-wrapper .journal-page-content blockquote.ct-wrap{ clear: none; }
+/* 2) Скроллбар в бордовом стиле (Chromium/Edge) */
+.journal-sheet.ct-wrapper .journal-entry-pages::-webkit-scrollbar{ width: 10px; }
+.journal-sheet.ct-wrapper .journal-entry-pages::-webkit-scrollbar-track{
+  background: rgba(0,0,0,.08); border-radius: 8px;
+}
+.journal-sheet.ct-wrapper .journal-entry-pages::-webkit-scrollbar-thumb{
+  background: linear-gradient(#8c1b1b,#5e1414); border-radius: 8px;
+  border: 2px solid rgba(255,255,255,.25);
+}
+
+/* 3) Шапка секций — чуть объёмнее и плотнее */
+.journal-sheet.ct-wrapper .journal-page-content h1{
+  text-shadow: 0 1px 0 rgba(255,255,255,.4);
+}
+.journal-sheet.ct-wrapper .journal-page-content h2{
+  font-weight: 400; letter-spacing:.01em;
+}
+
+/* 4) «Карточка» страницы чуть светлее по краям (внутренняя тень) */
+.journal-sheet.ct-wrapper .journal-page-content{
+  box-shadow:
+    0 4px 24px rgba(0,0,0,.25),
+    inset 0 0 0 1px rgba(0,0,0,.06),
+    inset 0 12px 24px rgba(0,0,0,.05);
+}
+
+/* 5) Сайдбар: ховер по строкам и текущая страница */
+.journal-sheet.ct-wrapper .journal-sidebar .directory-item:hover{
+  background: rgba(255,255,255,.06);
+}
+.journal-sheet.ct-wrapper .journal-sidebar .directory-item.active{
+  background: rgba(255,255,255,.12);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
+}
+/* h2 — центрированный разделитель как у h1, но чуть меньше */
+.journal-sheet.ct-wrapper .journal-page-content h2{
+  position: relative;
+  margin: .75rem 0 .4rem;
+  padding: 0;
+  border: none;
+}
+.journal-sheet.ct-wrapper .journal-page-content h2::after{
+  content: "";
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: -8px;
+  height: 10px;
+  width: 66%;
+  background: var(--div-img) repeat-x center;
+  background-size: 120px 9px;       /* поменьше, чем у h1 */
+  filter: drop-shadow(var(--div-shadow));
+  opacity: .95;
+}
+
+/* h3 — более тонкая полоска, слева-направо (без картинки) */
+.journal-sheet.ct-wrapper .journal-page-content h3{
+  position: relative;
+  margin: .6rem 0 .35rem;
+  padding: 0;
+  border: none;
+}
+.journal-sheet.ct-wrapper .journal-page-content h3::after{
+  content: "";
+  position: absolute;
+  left: 0; bottom: -6px;
+  height: 2px;
+  width: min(40%, 240px);
+  background: linear-gradient(90deg, var(--div-color), rgba(140,27,27,.25));
+  border-radius: 2px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.35);
+  opacity: .95;
+}

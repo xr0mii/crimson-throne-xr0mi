@@ -1,7 +1,6 @@
-2025/08/11-19:13:59.771 1c28 Recovering log #49
-2025/08/11-19:13:59.773 1c28 Delete type=0 #49
-2025/08/11-19:13:59.773 1c28 Delete type=3 #48
-2025/08/11-19:17:36.288 2e5c Level-0 table #53: started
-2025/08/11-19:17:36.294 2e5c Level-0 table #53: 659087 bytes OK
-2025/08/11-19:17:36.295 2e5c Delete type=0 #51
-2025/08/11-19:17:36.299 2e5c Manual compaction at level-0 from '!adventures!4INj17P0VXMCVbOK' @ 72057594037927935 : 1 .. '!adventures!4INj17P0VXMCVbOK' @ 0 : 0; will stop at (end)
+2025/09/21-11:43:51.829 4944 Recovering log #205
+2025/09/21-11:43:51.830 4944 Delete type=0 #205
+2025/09/21-11:43:51.830 4944 Delete type=3 #203
+2025/09/21-17:00:20.110 5270 Level-0 table #210: started
+2025/09/21-17:00:20.123 5270 Level-0 table #210: 1540266 bytes OK
+2025/09/21-17:00:20.124 5270 Delete type=0 #208
