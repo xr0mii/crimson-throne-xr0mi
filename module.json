@@ -1,35 +1,82 @@
 {
   "id": "crimson-throne-xr0mi",
-  "title": "Проклятие Багряного Трона",
+  "title": "xr0mi-adv: Проклятие Багряного Трона",
   "version": "1.0.1",
-  "compatibility": { "minimum": "13", "verified": "13" },
-  "description": "Конвертация приключения \"Проклятие Багряного Трона\" от xr0mi с переводом на русский.",
-  "authors": [{ "name": "xr0mi", "url": "https://boosty.to/xr0mi" }],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "description": "<p>Конвертация приключения \"Проклятие Багряного Трона\" от xr0mi с переводом на русский.</p>",
+  "authors": [
+    {
+      "name": "xr0mi",
+      "url": "https://boosty.to/xr0mi",
+      "discord": "xr0mi",
+      "flags": {}
+    }
+  ],
   "url": "https://boosty.to/xr0mi",
-  "styles": ["styles/ct-journal.css"],
-  "scripts": ["scripts/ct-journal.js"],
-
+  "styles": [
+    {
+      "src": "styles/ct-journal.css"
+    }
+  ],
+  "scripts": [
+    "scripts/ct-journal.js"
+  ],
   "manifest": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/module.json",
   "download": "https://github.com/xr0mii/crimson-throne-xr0mi/archive/refs/heads/main.zip",
   "readme": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/README.md",
   "changelog": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/CHANGELOG.md",
-
-  "flags": { "canUpload": true },
-
+  "flags": {
+    "canUpload": true
+  },
   "packs": [
     {
       "name": "crimson-throne-ru",
       "label": "Проклятие Багряного Трона",
       "path": "packs/crimson-throne-ru",
       "type": "Adventure",
-      "system": "pf2e"
+      "system": "pf2e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
     }
   ],
   "relationships": {
-    "systems": [{ "id": "pf2e", "type": "system" }],
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system",
+        "compatibility": {}
+      }
+    ],
     "requires": [
-      { "id": "pf2e-token-pack", "type": "module", "manifest": "https://raw.githubusercontent.com/Metofay/pf2e-token-pack/main/module.json" },
-      { "id": "levels", "type": "module", "manifest": "https://github.com/theripper93/Levels/releases/download/6.0.15/module.json" }
+      {
+        "id": "pf2e-token-pack",
+        "type": "module",
+        "manifest": "https://raw.githubusercontent.com/Metofay/pf2e-token-pack/main/module.json",
+        "compatibility": {}
+      },
+      {
+        "id": "levels",
+        "type": "module",
+        "manifest": "https://github.com/theripper93/Levels/releases/download/6.0.15/module.json",
+        "compatibility": {}
+      },
+      {
+        "id": "pf2e-ru",
+        "type": "module",
+        "manifest": "https://gitlab.com/gnuraco/pf2r/-/raw/master/module.json",
+        "compatibility": {}
+      },
+      {
+        "id": "ru-ru",
+        "type": "module",
+        "manifest": "https://github.com/phenomen/foundry-vtt-ru/releases/download/latest/module.json",
+        "compatibility": {}
+      }
     ]
   }
 }
