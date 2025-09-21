@@ -1,7 +1,7 @@
 {
   "id": "crimson-throne-xr0mi",
   "title": "Проклятие Багряного Трона",
-  "version": "1.0.3",
+  "version": "1.0.1",
   "compatibility": { "minimum": "13", "verified": "13" },
   "description": "Конвертация приключения \"Проклятие Багряного Трона\" от xr0mi с переводом на русский.",
   "authors": [{ "name": "xr0mi", "url": "https://boosty.to/xr0mi" }],
