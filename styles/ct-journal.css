@@ -3,19 +3,19 @@
   font-family: "Oranienbaum";
   src: url("../assets/fonts/oranienbaum-regular.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;
-  unicode-range: U+000-5FF, U+400-4FF; /* латиница+кириллица */
+  unicode-range: U+0000-00FF, U+0100-024F, U+0400-04FF; /* латиница+кириллица */
 }
 @font-face {
   font-family: "Merriweather";
   src: url("../assets/fonts/merriweather-400.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;
-  unicode-range: U+000-5FF, U+400-4FF;
+  unicode-range: U+0000-00FF, U+0100-024F, U+0400-04FF;
 }
 @font-face {
   font-family: "Merriweather";
   src: url("../assets/fonts/merriweather-700.woff2") format("woff2");
   font-weight: 700; font-style: normal; font-display: swap;
-  unicode-range: U+000-5FF, U+400-4FF;
+  unicode-range: U+0000-00FF, U+0100-024F, U+0400-04FF;
 }
 /* Глобальные переменные темы */
 .ct-wrapper {
@@ -51,7 +51,6 @@
   --fs-h2:   clamp(22px, 2.0vw, 30px);
   --fs-h3:   clamp(18px, 1.6vw, 22px);
   --lh-body: 1.6;
-  --ct-maxw: 880px;
   --img-radius: 10px;                      /* скругление */
   --img-border: rgba(0,0,0,.15);           /* тонкая окантовка */
   --img-shadow: 0 4px 16px rgba(0,0,0,.25);/* мягкая тень */
@@ -333,4 +332,28 @@
   border-radius: 2px;
   box-shadow: 0 1px 0 rgba(255,255,255,.35);
   opacity: .95;
+}
+
+/* Inline image rows (portraits side-by-side) */
+.journal-sheet.ct-wrapper .journal-page-content .ct-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.journal-sheet.ct-wrapper .journal-page-content .ct-row.center {
+  justify-content: center;
+}
+.journal-sheet.ct-wrapper .journal-page-content .ct-row .ct-portrait,
+.journal-sheet.ct-wrapper .journal-page-content .ct-row img.ct-portrait {
+  border-radius: var(--img-radius);
+  box-shadow: var(--img-shadow);
+  border: 1px solid var(--img-border);
+}
+.journal-sheet.ct-wrapper .journal-page-content .ct-row img {
+  width: min(46%, 320px);
+  height: auto;
+}
+@media (max-width: 720px) {
+  .journal-sheet.ct-wrapper .journal-page-content .ct-row img { width: min(100%, 320px); }
 }

@@ -1,0 +1,34 @@
+<section class="harrow-tracker ct-theme">
+  <table class="ct-ht-table">
+    <thead>
+      <tr>
+        <th>Персонаж</th>
+        <th class="ct-col-points">Очки</th>
+        <th class="ct-col-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#if rows.length}}
+        {{#each rows as |r|}}
+        <tr data-actor-id="{{r.id}}">
+          <td>{{r.name}}</td>
+          <td class="ct-points">
+            <input class="hp-input ct-input" type="number" min="0" value="{{r.points}}" />
+          </td>
+          <td class="ct-actions">
+            <div class="ct-btns">
+              <button type="button" class="hp-dec ct-btn ct-btn--sm" title="-1"><i class="fas fa-minus"></i></button>
+              <button type="button" class="hp-inc ct-btn ct-btn--sm" title="+1"><i class="fas fa-plus"></i></button>
+              {{#if ../isGM}}
+              <button type="button" class="hp-reset ct-btn ct-btn--sm" title="Сброс до 0"><i class="fas fa-undo"></i></button>
+              {{/if}}
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+      {{else}}
+        <tr><td colspan="3"><em>Нет доступных персонажей.</em></td></tr>
+      {{/if}}
+    </tbody>
+  </table>
+</section>

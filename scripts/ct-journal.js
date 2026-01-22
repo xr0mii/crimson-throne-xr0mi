@@ -5,9 +5,24 @@ const WRAP_CSS  = "ct-wrapper";
 const DOC_CSS   = "ct-doc";
 
 /** Включать стиль для всех журналов (true) или по флагу/паку (false) */
-const APPLY_TO_ALL = true;
+const APPLY_TO_ALL = false;
 /** Если APPLY_TO_ALL = false, то можно ограничить по компендию: */
-const PACK_ID = "crimson-throne-xr0mi.crimson-throne-ru";
+const PACK_IDS = [
+  "crimson-throne-xr0mi.crimson-throne-ru"
+];
+
+function isFromOurPacks(entry) {
+  try {
+    if (!entry) return false;
+    if (entry.pack && PACK_IDS.includes(entry.pack)) return true;
+    const src = entry.flags?.core?.sourceId;
+    if (typeof src === "string") {
+      // Compendium.<moduleId>.<packId>.<uuid>
+      return PACK_IDS.some(pid => src.startsWith(`Compendium.${pid}.`));
+    }
+  } catch (_e) { /* no-op */ }
+  return false;
+}
 
 function applyCtStyle(app, html) {
   const entry = app.object ?? app.document;
@@ -15,14 +30,15 @@ function applyCtStyle(app, html) {
 
   // Решаем, применять ли стиль
   let enable = APPLY_TO_ALL;
+  const isOurSheet = app?.constructor?.name === "CtJournalSheet";
   if (!APPLY_TO_ALL) {
-    enable = entry.pack === PACK_ID || entry.getFlag(MODULE_ID, "useCtStyle") === true;
+    enable = isOurSheet || entry.getFlag(MODULE_ID, "useCtStyle") === true;
   }
   if (!enable) return;
 
   // Классы-метки для CSS
   html.addClass(WRAP_CSS);
-  html.find(".journal-entry-content, .journal-entry-pages").addClass(DOC_CSS);
+  html.find(".journal-entry-content, .journal-entry-pages, .journal-page-content").addClass(DOC_CSS);
 
   // Если окно улетело за край (из-за запомненной позиции), мягко центрируем
   centerIfOffscreen(app);
@@ -59,3 +75,45 @@ Hooks.on("renderJournalEntryPageSheet", (pageApp) => {
   const sheet = je?.sheet;
   if (sheet?.element?.length) applyCtStyle(sheet, sheet.element);
 });
+
+// ----- Регистрация собственного Journal Sheet и автоприменение для наших журналов -----
+class CtJournalSheet extends JournalSheet {
+  static get defaultOptions() {
+    const opts = super.defaultOptions;
+    opts.sheetConfig = true; // показывать кнопку «Бланк»
+    return opts;
+  }
+
+  async _render(force, options) {
+    await super._render(force, options);
+    try { applyCtStyle(this, this.element); } catch (_e) { /* no-op */ }
+  }
+}
+
+Hooks.once("init", () => {
+  try {
+    DocumentSheetConfig.registerSheet(JournalEntry, MODULE_ID, CtJournalSheet, {
+      label: () => "Тема \"Алый Трон\"",
+      makeDefault: false
+    });
+  } catch (_e) { /* no-op */ }
+});
+
+// Автовыбор нашего шита при импорте из компендия приключения
+Hooks.on("preCreateJournalEntry", (_doc, data) => {
+  try {
+    const src = data?.flags?.core?.sourceId;
+    if (!src) return;
+    const matches = PACK_IDS.some(pid => typeof src === "string" && src.startsWith(`Compendium.${pid}.`));
+    if (!matches) return;
+    data.flags = data.flags ?? {};
+    data.flags.core = data.flags.core ?? {};
+    data.flags.core.sheetClass = `${MODULE_ID}.CtJournalSheet`;
+  } catch (_e) { /* no-op */ }
+});
+
+// Переключатель темы в кнопках заголовка листа журнала (v13)
+// (UI toggle removed — используем стандартный выбор «Бланк»)
+
+// Контекстное меню в директории журналов: включить/выключить тему
+// (Контекстное меню отключено — используем стандартный выбор «Бланк»)
