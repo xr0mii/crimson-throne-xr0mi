@@ -87,49 +87,6 @@
     _harrowApp.render(true, { focus: true });
   }
 
-  Hooks.on("getSceneControlButtons", (controls) => {
-    try {
-      // v13 provides an object of groups; add our tool into the tokens group if available
-      const addTool = (groupName, toolName, tool) => {
-        const grp = controls?.[groupName];
-        if (!grp) return false;
-        grp.tools = grp.tools || {};
-        grp.tools[toolName] = tool;
-        return true;
-      };
-
-      addTool("tokens", "harrowTracker", {
-        name: "harrowTracker",
-        order: 100,
-        title: "Очки Харроу",
-        icon: "fa-solid fa-swatchbook",
-        button: true,
-        visible: game.user?.isGM ?? true,
-        onClick: () => toggleHarrowTracker()
-      });
-
-      // Dedicated GM-only group to ensure visibility in the left toolbar
-      controls.harrow = controls.harrow || {
-        name: "harrow",
-        order: 11,
-        title: "Очки Харроу",
-        icon: "fa-solid fa-swatchbook",
-        layer: "tokens",
-        visible: game.user?.isGM ?? true,
-        tools: {},
-        activeTool: "open"
-      };
-      controls.harrow.tools.open = {
-        name: "open",
-        order: 1,
-        title: "Открыть трекер",
-        icon: "fa-solid fa-arrow-up-right-from-square",
-        button: true,
-        onClick: () => toggleHarrowTracker()
-      };
-    } catch (e) { console.error("[crimson-throne-xr0mi] getSceneControlButtons error", e); }
-  });
-
   // Button in Actor sheet header
   Hooks.on("getActorSheetHeaderButtons", (app, buttons) => {
     try {
@@ -154,14 +111,6 @@
       // Ensure scene controls rebuild after our hook is registered
       ui.controls?.initialize(true);
     } catch (_e) { /* no-op */ }
-  });
-
-  // Supported way to add a chat command
-  Hooks.on("chatMessage", (_log, message, _data) => {
-    try {
-      if (String(message).trim().toLowerCase() === "/harrow") { toggleHarrowTracker(); return false; }
-    } catch (_e) {}
-    return true;
   });
 
   Hooks.on("updateActor", (_actor, diff) => {
