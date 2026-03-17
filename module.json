@@ -1,7 +1,7 @@
 {
   "id": "crimson-throne-xr0mi",
   "title": "xr0mi-adv: Проклятие Багряного Трона",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
@@ -57,12 +57,6 @@
       }
     ],
     "requires": [
-      {
-        "id": "pf2e-token-pack",
-        "type": "module",
-        "manifest": "https://raw.githubusercontent.com/Metofay/pf2e-token-pack/main/module.json",
-        "compatibility": {}
-      },
       {
         "id": "levels",
         "type": "module",
