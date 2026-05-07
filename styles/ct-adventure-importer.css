@@ -1,0 +1,182 @@
+/* ==== CRIMSON THRONE - ADVENTURE IMPORTER STYLES ========================== */
+
+.ct-adventure-importer {
+  --ct-paper: #f6f1e8;
+  --ct-accent: #8c1b1b;
+  --ct-ink: #221a18;
+  --ct-panel-border: rgba(0, 0, 0, 0.16);
+
+  --frame-top: 220px;
+  --frame-right: 170px;
+  --frame-bottom: 220px;
+  --frame-left: 200px;
+  --slice-top: 480;
+  --slice-right: 376;
+  --slice-bottom: 440;
+  --slice-left: 460;
+  --frame-outset: 48px;
+}
+
+.ct-adventure-importer::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--frame-outset));
+  pointer-events: none;
+  z-index: 1;
+  border-style: solid;
+  border-width: var(--frame-top) var(--frame-right) var(--frame-bottom) var(--frame-left);
+  border-image: url("../assets/frames/frame-9slice.png")
+    var(--slice-top) var(--slice-right) var(--slice-bottom) var(--slice-left) stretch;
+  border-image-repeat: round stretch;
+  filter:
+    drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 0 10px rgba(0, 0, 0, 0.35));
+}
+
+.ct-adventure-importer .window-header {
+  position: relative;
+  z-index: 3;
+}
+
+.ct-adventure-importer .window-content {
+  position: relative;
+  z-index: 2;
+  background: url("../assets/bg/crimson-tile.png") repeat;
+  background-size: 512px;
+  color: var(--ct-ink);
+  padding: 0;
+}
+
+.ct-adventure-importer .standard-form {
+  display: grid;
+  grid-template:
+    "banner banner" auto
+    "header header" auto
+    "contents contents" min-content
+    "footer footer" auto / 3fr 1fr;
+  gap: 12px;
+  padding: 0;
+}
+
+.ct-adventure-importer .adventure-banner {
+  grid-area: banner;
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border: none;
+  border-radius: 0;
+}
+
+.ct-adventure-importer .adventure-header {
+  grid-area: header;
+}
+
+.ct-adventure-importer .adventure-header h1 {
+  margin: 0;
+  border: none;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.ct-adventure-importer .adventure-contents {
+  grid-area: contents;
+  padding: 0 1rem 0.75rem;
+}
+
+.ct-adventure-importer .adventure-contents.flexrow {
+  display: grid;
+  grid-template:
+    "overview controls" min-content
+    "overview options" min-content / 3fr 1fr;
+  gap: 12px;
+}
+
+.ct-adventure-importer .adventure-overview,
+.ct-adventure-importer .import-controls,
+.ct-adventure-importer .import-options {
+  background: var(--ct-paper);
+  border: 1px solid var(--ct-panel-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
+  padding: 0 12px 12px;
+}
+
+.ct-adventure-importer .adventure-overview {
+  grid-area: overview;
+  min-height: 280px;
+}
+
+.ct-adventure-importer .import-controls {
+  grid-area: controls;
+}
+
+.ct-adventure-importer .import-options {
+  grid-area: options;
+  min-width: 260px;
+}
+
+.ct-adventure-importer .adventure-overview h2,
+.ct-adventure-importer .import-controls h2,
+.ct-adventure-importer .import-options h2 {
+  color: var(--ct-accent);
+  border: none;
+  border-bottom: 2px solid rgba(140, 27, 27, 0.65);
+  margin: 10px 0 8px;
+  padding: 0 0 2px;
+  font-size: 1.45rem;
+}
+
+.ct-adventure-importer .import-controls .form-group,
+.ct-adventure-importer .import-options .form-group {
+  margin: 2px 0;
+}
+
+.ct-adventure-importer .form-footer {
+  grid-area: footer;
+  margin: 0.25rem 1rem 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.ct-adventure-importer .form-footer button {
+  background: var(--ct-paper);
+  color: var(--ct-ink);
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  border-radius: 6px;
+}
+
+.ct-adventure-importer .form-footer button:hover {
+  box-shadow: 0 0 0 1px rgba(140, 27, 27, 0.65) inset;
+}
+
+.ct-adventure-importer .window-resizable-handle {
+  z-index: 9999;
+}
+
+@media (max-width: 1100px) {
+  .ct-adventure-importer {
+    --frame-top: 100px;
+    --frame-right: 80px;
+    --frame-bottom: 96px;
+    --frame-left: 96px;
+  }
+}
+
+@media (max-width: 900px) {
+  .ct-adventure-importer {
+    --frame-top: 84px;
+    --frame-right: 64px;
+    --frame-bottom: 82px;
+    --frame-left: 82px;
+  }
+
+  .ct-adventure-importer .adventure-contents.flexrow {
+    grid-template:
+      "overview" auto
+      "controls" auto
+      "options" auto / 1fr;
+  }
+}

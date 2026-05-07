@@ -357,3 +357,118 @@
 @media (max-width: 720px) {
   .journal-sheet.ct-wrapper .journal-page-content .ct-row img { width: min(100%, 320px); }
 }
+
+/* ---- Content polish -------------------------------------------------------
+   Keep .ct-doc as a theme scope only. If old/new pages contain a manual
+   <div class="ct-doc"> wrapper, do not add an extra visual box around content. */
+.journal-sheet.ct-wrapper .journal-page-content > .ct-doc {
+  display: contents;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content {
+  background:
+    radial-gradient(circle at 15% 8%, rgba(255,255,255,.55), transparent 30%),
+    radial-gradient(circle at 90% 18%, rgba(140,27,27,.08), transparent 28%),
+    linear-gradient(180deg, rgba(255,255,255,.28), rgba(122,70,35,.08)),
+    var(--ct-paper);
+}
+
+.journal-sheet.ct-wrapper .journal-page-content strong {
+  color: #3a1412;
+  font-weight: 700;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content a.content-link,
+.journal-sheet.ct-wrapper .journal-page-content a.inline-roll,
+.journal-sheet.ct-wrapper .journal-page-content span.content-link,
+.journal-sheet.ct-wrapper .journal-page-content span.inline-roll {
+  background: rgba(140,27,27,.08);
+  border: 1px solid rgba(140,27,27,.22);
+  border-radius: 5px;
+  color: var(--ct-accent);
+  padding: 0 4px;
+  text-decoration: none;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content a.content-link:hover,
+.journal-sheet.ct-wrapper .journal-page-content a.inline-roll:hover {
+  background: rgba(140,27,27,.14);
+  text-shadow: none;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content blockquote {
+  font-family: var(--font-body);
+  font-size: calc(var(--fs-body) + .25px);
+  letter-spacing: .005em;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.08), transparent 16%),
+    linear-gradient(180deg, #3a0f12, #5a1115 72%, #431014);
+}
+
+.journal-sheet.ct-wrapper .journal-page-content blockquote::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  width: 72px;
+  height: 8px;
+  background: var(--div-img) repeat-x center;
+  background-size: 96px 8px;
+  opacity: .35;
+  pointer-events: none;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout {
+  position: relative;
+  color: #26160f;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255,255,255,.62), transparent 34%),
+    radial-gradient(circle at 82% 92%, rgba(120,72,20,.15), transparent 30%),
+    linear-gradient(180deg, rgba(255,252,235,.92), rgba(230,201,146,.68));
+  box-shadow:
+    0 6px 18px rgba(56,32,12,.22),
+    inset 0 0 26px rgba(108,65,20,.16);
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout h3 {
+  margin-top: 0;
+  color: #571414;
+  text-transform: uppercase;
+  letter-spacing: .035em;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout h3::after {
+  width: min(65%, 360px);
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout > :first-child {
+  margin-top: 0;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout > :last-child {
+  margin-bottom: 0;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-treasure,
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-award {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,.72), transparent 30%),
+    radial-gradient(circle at 90% 85%, rgba(151,111,34,.22), transparent 35%),
+    linear-gradient(180deg, rgba(255,246,205,.95), rgba(218,174,92,.72));
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-treasure h3::before {
+  content: "◆ ";
+  color: #9d6b18;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-award h3::before {
+  content: "✦ ";
+  color: #8c1b1b;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content table {
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
