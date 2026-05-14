@@ -1,0 +1,119 @@
+<section class="blood-pig ct-theme">
+  <header class="bp-scoreboard">
+    <div class="bp-team">
+      <span class="bp-team__label">Герои</span>
+      <div class="bp-team__score {{#if pcWon}}is-winner{{/if}}">{{state.pcScore}}</div>
+      <div class="bp-row bp-row--center">
+        <button type="button" class="bp-btn bp-score" data-team="pc" data-delta="-1" title="-1"><i class="fas fa-minus"></i></button>
+        <button type="button" class="bp-btn bp-score bp-btn--accent" data-team="pc" data-delta="1" title="+1"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="bp-goal">
+      <span>{{#if winner}}{{winner}}{{else}}до 5 очков{{/if}}</span>
+      <button type="button" class="bp-btn bp-btn--ghost bp-reset-game"><i class="fas fa-rotate-left"></i> Сброс</button>
+    </div>
+
+    <div class="bp-team">
+      <span class="bp-team__label">Шинглснайпы</span>
+      <div class="bp-team__score {{#if emperorWon}}is-winner{{/if}}">{{state.emperorScore}}</div>
+      <div class="bp-row bp-row--center">
+        <button type="button" class="bp-btn bp-score" data-team="emperor" data-delta="-1" title="-1"><i class="fas fa-minus"></i></button>
+        <button type="button" class="bp-btn bp-score bp-btn--accent" data-team="emperor" data-delta="1" title="+1"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <section class="bp-panel">
+    <h3>Игра</h3>
+    <div class="bp-row bp-row--wrap">
+      <button type="button" class="bp-btn bp-btn--accent bp-flip"><i class="fas fa-coins"></i> Подбросить монету</button>
+      <button type="button" class="bp-btn bp-score-goal" data-team="pc"><i class="fas fa-drumstick-bite"></i> Очко героям</button>
+      <button type="button" class="bp-btn bp-score-goal" data-team="emperor"><i class="fas fa-drumstick-bite"></i> Очко Шинглснайпам</button>
+    </div>
+  </section>
+
+  <section class="bp-panel bp-token-panel">
+    <h3>Выбранный токен</h3>
+    {{#if selectedToken}}
+      <div class="bp-selected">
+        <img src="{{selectedToken.img}}" />
+        <div>
+          <strong>{{selectedToken.name}}</strong>
+          <span>Действия в чат будут отправлены от этого токена.</span>
+        </div>
+      </div>
+      <div class="bp-row bp-row--wrap">
+        <button type="button" class="bp-btn bp-btn--accent bp-set-carrier"><i class="fas fa-hand-holding"></i> Держит поросёнка</button>
+        <button type="button" class="bp-btn bp-set-pig-token"><i class="fas fa-piggy-bank"></i> Это поросёнок</button>
+        <button type="button" class="bp-btn bp-drop-to-field"><i class="fas fa-arrow-down"></i> Уронить на поле</button>
+      </div>
+    {{else}}
+      <p class="bp-muted">Выбери токен на сцене, чтобы быстро назначить носителя и отправлять действия от его имени.</p>
+    {{/if}}
+  </section>
+
+  <section class="bp-panel bp-pig-token-panel">
+    <h3>Токен поросёнка</h3>
+    {{#if pigToken}}
+      <div class="bp-selected">
+        <img src="{{pigToken.img}}" />
+        <div>
+          <strong>{{pigToken.name}}</strong>
+          <span>Сцена: {{pigToken.scene}}</span>
+        </div>
+      </div>
+    {{else}}
+      <p class="bp-muted">Выбери токен поросёнка на сцене и нажми «Это поросёнок».</p>
+    {{/if}}
+
+    <div class="bp-locations">
+      <div class="bp-location">
+        <strong>C4a</strong>
+        <span>{{#if hasC4a}}позиция сохранена{{else}}позиция не задана{{/if}}</span>
+        <button type="button" class="bp-btn bp-remember-location" data-location="c4a">Запомнить</button>
+        <button type="button" class="bp-btn" data-pig-side="c4a">Переместить</button>
+      </div>
+      <div class="bp-location">
+        <strong>C4e</strong>
+        <span>{{#if hasC4e}}позиция сохранена{{else}}позиция не задана{{/if}}</span>
+        <button type="button" class="bp-btn bp-remember-location" data-location="c4e">Запомнить</button>
+        <button type="button" class="bp-btn" data-pig-side="c4e">Переместить</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="bp-panel">
+    <h3>Поросёнок</h3>
+    <div class="bp-form">
+      <label>
+        <span>Где сейчас</span>
+        <input type="text" class="bp-input bp-state-field" data-field="pigStatus" value="{{state.pigStatus}}" />
+      </label>
+      <label>
+        <span>Кто держит</span>
+        <input type="text" class="bp-input bp-state-field" data-field="carrier" value="{{state.carrier}}" placeholder="имя токена / персонажа" />
+      </label>
+      <label class="bp-check">
+        <input type="checkbox" class="bp-state-check" data-field="restrained" {{#if state.restrained}}checked{{/if}} />
+        <span>Поросёнок сдерживаем</span>
+      </label>
+    </div>
+
+    <div class="bp-row bp-row--wrap">
+      <button type="button" class="bp-btn bp-btn--accent bp-squirm"><i class="fas fa-dice-d6"></i> Брыкание 1d6</button>
+      <button type="button" class="bp-btn bp-clear-carrier"><i class="fas fa-hand"></i> Очистить носителя</button>
+    </div>
+  </section>
+
+  <section class="bp-panel">
+    <h3>Быстрые правила в чат</h3>
+    <div class="bp-actions">
+      <button type="button" class="bp-btn bp-post-card" data-card="grab">Схватить поросёнка</button>
+      <button type="button" class="bp-btn bp-post-card" data-card="throw">Бросить поросёнка</button>
+      <button type="button" class="bp-btn bp-post-card" data-card="catch">Поймать поросёнка</button>
+      <button type="button" class="bp-btn bp-post-card" data-card="squirm">Таблица брыкания</button>
+      <button type="button" class="bp-btn bp-post-card" data-card="rules">Краткие правила</button>
+    </div>
+  </section>
+</section>
