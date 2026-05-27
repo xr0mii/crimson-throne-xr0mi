@@ -1,0 +1,182 @@
+/* Madame Carrington oneiromancy helper */
+.window-app.ct-carrington-app .window-header {
+  background: linear-gradient(180deg, #211821, #3f2432);
+  color: #fff3e8;
+}
+
+.window-app.ct-carrington-app .window-content {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(100, 74, 99, 0.22), transparent 38%),
+    linear-gradient(180deg, #f4eadc, #e8d8c4);
+  color: #2a1718;
+  padding: 10px;
+}
+
+.ct-carrington {
+  --ct-car-accent: #6f263b;
+  --ct-car-accent-dark: #3f1727;
+  --ct-car-paper: rgba(255, 250, 241, 0.9);
+  display: grid;
+  gap: 10px;
+  font-family: "Merriweather", Georgia, serif;
+}
+
+.ct-carrington__hint {
+  margin: 0;
+  color: rgba(42, 23, 24, 0.72);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.ct-carrington label {
+  display: grid;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--ct-car-accent-dark);
+}
+
+.ct-carrington label span {
+  font-size: 12px;
+}
+
+.ct-carrington textarea,
+.ct-carrington select {
+  width: 100%;
+  border: 1px solid rgba(111, 38, 59, 0.36);
+  border-radius: 6px;
+  background: var(--ct-car-paper);
+  color: #2a1718;
+}
+
+.ct-carrington textarea {
+  resize: vertical;
+  min-height: 110px;
+  padding: 8px;
+  line-height: 1.45;
+}
+
+.ct-carrington__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ct-carrington__actions {
+  display: flex;
+}
+
+.ct-carrington button {
+  width: 100%;
+  border: 1px solid rgba(63, 23, 39, 0.9);
+  border-radius: 7px;
+  background: linear-gradient(180deg, #8b334d, #5f2034);
+  color: #fff5ed;
+  font-weight: 700;
+}
+
+.ct-carrington button:hover {
+  filter: brightness(1.08);
+}
+
+#chat-controls .ct-carrington-chat-control,
+.chat-controls .ct-carrington-chat-control {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 520px) {
+  .ct-carrington__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ct-carrington-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 42px;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(25, 14, 20, 0.14), transparent 34%),
+    rgba(0, 0, 0, 0.18);
+  pointer-events: auto;
+  animation: ct-carrington-fade-in 220ms ease-out both;
+}
+
+.ct-carrington-overlay__board {
+  width: min(760px, 92vw);
+  border: 1px solid rgba(255, 238, 220, 0.32);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(88, 31, 52, 0.96), rgba(46, 21, 34, 0.96));
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  color: #fff2e8;
+  overflow: hidden;
+}
+
+.ct-carrington-overlay__title {
+  padding: 13px 18px;
+  font-family: "Oranienbaum", Georgia, serif;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid rgba(255, 238, 220, 0.22);
+}
+
+.ct-carrington-overlay__message {
+  min-height: 5.8em;
+  padding: 24px 28px 28px;
+  background:
+    radial-gradient(circle at 92% 6%, rgba(255, 255, 255, 0.10), transparent 28%),
+    linear-gradient(180deg, rgba(255, 245, 230, 0.09), rgba(255, 245, 230, 0.03));
+  font-family: "Courier New", "Consolas", "Lucida Console", monospace;
+  font-size: clamp(20px, 2.35vw, 30px);
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.045em;
+  white-space: pre-wrap;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 8px rgba(255, 235, 205, 0.28),
+    0 1px 0 rgba(0, 0, 0, 0.45);
+}
+
+.ct-carrington-overlay__message::after {
+  content: "▌";
+  display: inline-block;
+  margin-left: 2px;
+  color: #ffd7bd;
+  animation: ct-carrington-cursor 780ms steps(1, end) infinite;
+}
+
+.ct-carrington-overlay__close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(31, 13, 22, 0.72);
+  color: #fff2e8;
+  padding: 6px 10px;
+}
+
+.ct-carrington-overlay.is-removing {
+  animation: ct-carrington-fade-out 180ms ease-in both;
+}
+
+@keyframes ct-carrington-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ct-carrington-fade-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(8px); }
+}
+
+@keyframes ct-carrington-cursor {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}

@@ -1,7 +1,7 @@
 {
   "id": "crimson-throne-xr0mi",
   "title": "xr0mi-adv: Проклятие Багряного Трона",
-  "version": "2.2.1",
+  "version": "3.0.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
@@ -25,12 +25,16 @@
     },
     {
       "src": "styles/blood-pig.css"
+    },
+    {
+      "src": "styles/carrington-board.css"
     }
   ],
   "scripts": [
     "scripts/ct-journal.js",
     "scripts/harrow-tracker.js",
-    "scripts/blood-pig.js"
+    "scripts/blood-pig.js",
+    "scripts/carrington-board.js"
   ],
   "manifest": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/module.json",
   "download": "https://github.com/xr0mii/crimson-throne-xr0mi/archive/refs/heads/main.zip",

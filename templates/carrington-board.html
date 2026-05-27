@@ -1,0 +1,48 @@
+<section class="ct-carrington">
+  <p class="ct-carrington__hint">
+    Сообщение появится у игроков поверх сцены, по одной букве, словно планшетка собирает его на доске.
+  </p>
+
+  <div class="ct-carrington__presets">
+    <label>
+      <span>Заготовка</span>
+      <select class="ct-carrington-preset">
+        <option value="">Выбрать фразу...</option>
+        {{#each presets}}
+          <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+    </label>
+  </div>
+
+  <label class="ct-carrington__field">
+    <span>Сообщение</span>
+    <textarea class="ct-carrington-message" rows="5" placeholder="Введите ответ мадам Каррингтон..."></textarea>
+  </label>
+
+  <div class="ct-carrington__grid">
+    <label>
+      <span>Длительность</span>
+      <select class="ct-carrington-duration">
+        <option value="18000">18 секунд</option>
+        <option value="30000">30 секунд</option>
+        <option value="0">Пока не закроют</option>
+      </select>
+    </label>
+
+    <label>
+      <span>Скорость письма</span>
+      <select class="ct-carrington-speed">
+        <option value="45">Обычная</option>
+        <option value="25">Быстрая</option>
+        <option value="80">Медленная</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="ct-carrington__actions">
+    <button type="button" class="ct-carrington-send">
+      <i class="fas fa-moon"></i> Показать сообщение
+    </button>
+  </div>
+</section>
