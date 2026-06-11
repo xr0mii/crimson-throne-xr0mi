@@ -1,7 +1,8 @@
 {
   "id": "crimson-throne-xr0mi",
   "title": "xr0mi-adv: Проклятие Багряного Трона",
-  "version": "3.0.0",
+  "version": "3.0.1",
+  "socket": true,
   "compatibility": {
     "minimum": "13",
     "verified": "13"
