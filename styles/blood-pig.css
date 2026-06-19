@@ -6,7 +6,7 @@
   --bp-paper: #f6f1e8;
 }
 
-.window-app.blood-pig-app .window-header {
+:is(.window-app, .application).blood-pig-app .window-header {
   background:
     linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.24)),
     linear-gradient(90deg, var(--bp-red-dark), var(--bp-red));
@@ -14,7 +14,7 @@
   border-bottom: 2px solid #b3262d;
 }
 
-.window-app.blood-pig-app .window-content {
+:is(.window-app, .application).blood-pig-app .window-content {
   background:
     radial-gradient(circle at 20% 0%, rgba(255,255,255,.55), transparent 32%),
     linear-gradient(rgba(246,241,232,.88), rgba(246,241,232,.88)),

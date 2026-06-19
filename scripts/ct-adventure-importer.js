@@ -54,7 +54,7 @@
     CtAdventureImporter = class CtAdventureImporter extends CTA_AdventureImporterBase {
       static get DEFAULT_OPTIONS() {
         return foundry.utils.mergeObject(
-          super.DEFAULT_OPTIONS,
+          super.DEFAULT_OPTIONS ?? {},
           { classes: ["ct-wrapper", "ct-adventure-importer"] },
           { inplace: false }
         );
@@ -85,11 +85,19 @@
     console.log(`[${CTA_MODULE_ID}] Adventure importer sheet registered.`);
   });
 
-  Hooks.on("preCreateAdventure", (_document, data) => {
-    if (!isOurAdventure(data)) return;
-    data.flags ??= {};
-    data.flags.core ??= {};
-    data.flags.core.sheetClass = CTA_SHEET_CLASS;
+  Hooks.on("preCreateAdventure", (document, data) => {
+    const sourceLike = {
+      ...data,
+      flags: data?.flags ?? document?._source?.flags ?? document?.flags
+    };
+    if (!isOurAdventure(sourceLike)) return;
+
+    document.updateSource?.({ "flags.core.sheetClass": CTA_SHEET_CLASS });
+    if (data) {
+      data.flags ??= {};
+      data.flags.core ??= {};
+      data.flags.core.sheetClass = CTA_SHEET_CLASS;
+    }
   });
 
   Hooks.once("ready", async () => {

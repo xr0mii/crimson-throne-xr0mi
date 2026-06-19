@@ -19,9 +19,12 @@
 }
 /* Глобальные переменные темы */
 .ct-wrapper {
-  --ct-paper:  #f6f1e8;   /* фон "бумаги" */
+  --ct-paper:  #f3eadc;   /* фон "бумаги" */
+  --ct-paper-edge: #ddc8aa;
   --ct-accent: #8c1b1b;   /* бордовый акцент */
-  --ct-ink:    #221a18;   /* цвет текста */
+  --ct-ink:    #201713;   /* цвет текста */
+  --ct-heading:#301110;
+  --ct-title-on-dark: #f1d4a6;
   --ct-maxw:   980px;     /* ширина колонки текста */
   /* палитра под цитаты */
   --q-ink:   #fff7f4;
@@ -31,10 +34,10 @@
   --q-shadow: rgba(0,0,0,.35);
 
   /* Толщина видимой рамки вокруг окна (в px) */
-  --frame-top:    220px;
-  --frame-right:  170px;
-  --frame-bottom: 220px;
-  --frame-left:   200px;
+  --frame-top:    190px;
+  --frame-right:  150px;
+  --frame-bottom: 190px;
+  --frame-left:   170px;
 
   /* 9-slice срезы из PNG рамки (внутренняя граница рамки от краёв изображения) */
   --slice-top:    480;
@@ -43,7 +46,8 @@
   --slice-left:   460;
 
   /* Выступ рамки за пределы окна (делает её "вокруг" окна, а не внутри) */
-  --frame-outset: 48px;
+  --frame-outset: 38px;
+  --frame-inner-gap: 30px;
   --font-head: "Oranienbaum", "Merriweather", Georgia, serif;
   --font-body: "Merriweather", Georgia, serif;
   --fs-body: clamp(15px, 1.15vw, 16.5px);
@@ -61,7 +65,15 @@
 
 /* ---- Рамка вокруг всего окна журнала ------------------------------------ */
 /* ВАЖНО: не трогаем position у .journal-sheet (по умолчанию fixed)! */
-.journal-sheet.ct-wrapper::before {
+.journal-sheet.ct-wrapper {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  contain: none !important;
+}
+
+.journal-sheet.ct-wrapper .window-content::before {
   content: "";
   position: absolute;              /* позиционируется относительно окна (fixed-родителя) */
   inset: calc(-1 * var(--frame-outset));
@@ -83,14 +95,100 @@
 }
 
 /* Слои окна, чтобы ничто не перекрывалось */
-.journal-sheet.ct-wrapper .window-header  { position: relative; z-index: 3; }
+.journal-sheet.ct-wrapper .window-header  {
+  position: relative;
+  z-index: 8;
+  min-height: 28px;
+  padding-inline: 12px;
+  color: #f8ead8 !important;
+  background:
+    linear-gradient(180deg, rgba(16,6,8,.46), rgba(16,6,8,.12) 70%, transparent) !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.85);
+}
+.journal-sheet.ct-wrapper .window-header .window-title,
+.journal-sheet.ct-wrapper .window-header a,
+.journal-sheet.ct-wrapper .window-header button {
+  color: #fff3e3 !important;
+}
 .journal-sheet.ct-wrapper .window-content { position: relative; z-index: 2; }
 
 /* ---- Фон внутри окна (бордовый тайл) ------------------------------------ */
 .journal-sheet.ct-wrapper .window-content {
   overflow: visible;
-  background: url("../assets/bg/crimson-tile.png") repeat;
-  background-size: 512px;
+  contain: none !important;
+  box-sizing: border-box;
+  padding: var(--frame-inner-gap);
+  gap: 12px;
+  background:
+    linear-gradient(90deg, rgba(32,6,10,.82), rgba(79,10,17,.56) 36%, rgba(24,5,9,.82)),
+    url("../assets/bg/crimson-tile.png") repeat;
+  background-repeat: no-repeat, repeat;
+  background-size: auto, 512px;
+}
+
+.journal-sheet.ct-wrapper .journal-sidebar,
+.journal-sheet.ct-wrapper .journal-entry-content,
+.journal-sheet.ct-wrapper .journal-entry-pages {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  min-height: 0;
+}
+
+.journal-sheet.ct-wrapper .journal-sidebar {
+  color: #fff7ef;
+  background:
+    linear-gradient(180deg, rgba(129,21,27,.88), rgba(74,7,13,.94)),
+    url("../assets/bg/crimson-tile.png") repeat !important;
+  background-repeat: no-repeat, repeat !important;
+  background-size: auto, 512px !important;
+  border: 1px solid rgba(255,226,190,.16);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,235,205,.12),
+    inset -12px 0 24px rgba(35,0,6,.34),
+    0 8px 20px rgba(0,0,0,.24);
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0,0,0,.72);
+}
+
+.journal-sheet.ct-wrapper .journal-sidebar input,
+.journal-sheet.ct-wrapper .journal-sidebar .search input {
+  color: #fff4e7 !important;
+  background: rgba(30,10,12,.48) !important;
+  border-color: rgba(255,226,190,.22) !important;
+}
+
+.journal-sheet.ct-wrapper .journal-sidebar input::placeholder {
+  color: rgba(255,232,205,.66);
+}
+
+.journal-sheet.ct-wrapper .journal-sidebar .directory-item {
+  color: #fff7ef;
+  border-bottom-color: rgba(255,226,190,.16) !important;
+  background: rgba(45,0,8,.12);
+}
+
+.journal-sheet.ct-wrapper .journal-sidebar .directory-item:nth-child(even) {
+  background: rgba(255,255,255,.035);
+}
+
+/* V14 journal controls stay visible; hide only the JournalEntry name/title. */
+.journal-sheet.ct-wrapper .journal-header input[name="name"],
+.journal-sheet.ct-wrapper .journal-header .journal-title,
+.journal-sheet.ct-wrapper .journal-header .journal-name,
+.journal-sheet.ct-wrapper .journal-header .journal-entry-title,
+.journal-sheet.ct-wrapper .journal-header h1,
+.journal-sheet.ct-wrapper .journal-header h2,
+.journal-sheet.ct-wrapper .journal-entry-header input[name="name"],
+.journal-sheet.ct-wrapper .journal-entry-header .journal-title,
+.journal-sheet.ct-wrapper .journal-entry-header .journal-name,
+.journal-sheet.ct-wrapper .journal-entry-header .journal-entry-title,
+.journal-sheet.ct-wrapper .journal-entry-header h1,
+.journal-sheet.ct-wrapper .journal-entry-header h2 {
+  display: none !important;
 }
 
 /* ---- "Бумага" страницы и типографика ------------------------------------ */
@@ -100,11 +198,66 @@
   max-width: var(--ct-maxw);
   margin: 24px auto;
   padding: 24px 28px;
-  background: var(--ct-paper);
-  color: var(--ct-ink);
+  background: var(--ct-paper) !important;
+  color: var(--ct-ink) !important;
+  font-family: var(--font-body);
   box-shadow: 0 4px 24px rgba(0,0,0,.25);
-  border: 1px solid rgba(0,0,0,.12);
+  border: 1px solid rgba(75,41,25,.18);
   line-height: 1.6;
+}
+
+.journal-sheet.ct-wrapper .journal-entry-pages {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(120,23,28,.22), transparent 34%),
+    linear-gradient(180deg, rgba(19,4,9,.72), rgba(43,5,13,.68));
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,226,190,.07),
+    inset 0 10px 26px rgba(0,0,0,.24);
+}
+
+.journal-sheet.ct-wrapper .journal-entry-page > header,
+.journal-sheet.ct-wrapper .journal-entry-page .journal-page-header {
+  max-width: var(--ct-maxw);
+  margin: 8px auto 12px;
+  padding: 4px 18px 12px;
+}
+
+.journal-sheet.ct-wrapper .journal-entry-page > header :is(h1, h2, h3),
+.journal-sheet.ct-wrapper .journal-entry-page .journal-page-header :is(h1, h2, h3),
+.journal-sheet.ct-wrapper .journal-entry-page > :is(h1, h2, h3),
+.journal-sheet.ct-wrapper .journal-entry-page .journal-page-title,
+.journal-sheet.ct-wrapper .journal-entry-page .journal-page-heading {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--ct-title-on-dark) !important;
+  opacity: 1 !important;
+  font-family: var(--font-head);
+  font-size: var(--fs-h1);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  text-shadow:
+    0 2px 2px rgba(0,0,0,.86),
+    0 0 16px rgba(140,27,27,.42);
+}
+
+.journal-sheet.ct-wrapper .journal-entry-page > header :is(h1, h2, h3)::after,
+.journal-sheet.ct-wrapper .journal-entry-page .journal-page-header :is(h1, h2, h3)::after,
+.journal-sheet.ct-wrapper .journal-entry-page > :is(h1, h2, h3)::after,
+.journal-sheet.ct-wrapper .journal-entry-page .journal-page-title::after,
+.journal-sheet.ct-wrapper .journal-entry-page .journal-page-heading::after {
+  content: "";
+  display: block;
+  height: 10px;
+  width: min(78%, 720px);
+  margin: 2px auto 0;
+  background: var(--div-img) repeat-x center;
+  background-size: 120px 9px;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.55));
+  opacity: .9;
 }
 
 /* заголовки, разделители, ссылки */
@@ -114,6 +267,8 @@
   margin: .5rem 0 .6rem; padding: 0; border: none;
   text-transform: uppercase; letter-spacing: .02em;
   font-size: 28px; position: relative;
+  color: var(--ct-heading) !important;
+  opacity: 1 !important;
 }
 .ct-wrapper .ct-doc h1::after {
   content:"";
@@ -124,17 +279,17 @@
   opacity: .9; filter: drop-shadow(0 1px 0 rgba(0,0,0,.15));
 }
 
-.ct-wrapper .ct-doc h2 { border: none; margin: .75rem 0 .25rem; font-size: 22px; }
-.ct-wrapper .ct-doc h3 { border: none; margin: .6rem 0 .25rem;  font-size: 19px; }
-.ct-wrapper .ct-doc a  { color: var(--ct-accent); }
+.ct-wrapper .ct-doc h2 { border: none; margin: .75rem 0 .25rem; font-size: 22px; color: var(--ct-heading) !important; opacity: 1 !important; }
+.ct-wrapper .ct-doc h3 { border: none; margin: .6rem 0 .25rem;  font-size: 19px; color: #4b1715 !important; opacity: 1 !important; }
+.ct-wrapper .ct-doc a  { color: var(--ct-accent) !important; }
 .ct-wrapper .ct-doc a:hover { text-decoration: underline; }
 
 /* Врезки/хенд-ауты (если используешь) */
 .ct-wrapper .ct-doc .ct-handout {
-  border: 24px solid transparent;
-  -o-border-image: url("../assets/frames/handout-border.png") 24/24px round;
-     border-image: url("../assets/frames/handout-border.png") 24/24px round;
-  padding: 12px 16px; margin: 1rem 0;
+  border: 0;
+  border-image: none;
+  padding: 12px 16px;
+  margin: 1rem 0;
 }
 
 /* Таблицы, картинки сбоку и т.п. */
@@ -150,17 +305,20 @@
 @media (max-width: 1100px) {
   .ct-wrapper {
     --frame-top: 100px; --frame-right: 80px; --frame-bottom: 96px; --frame-left: 96px;
+    --frame-inner-gap: 22px;
   }
 }
 @media (max-width: 900px) {
   .ct-wrapper {
     --frame-top: 84px; --frame-right: 64px; --frame-bottom: 82px; --frame-left: 82px;
+    --frame-inner-gap: 16px;
   }
 }
-.journal-sheet.ct-wrapper::before { pointer-events: none; }
+.journal-sheet.ct-wrapper .window-content::before { pointer-events: none; }
 
 /* Ручка ресайза всегда поверх */
-.journal-sheet.ct-wrapper .window-resizable-handle {
+.journal-sheet.ct-wrapper .window-resizable-handle,
+.journal-sheet.ct-wrapper .window-resize-handle {
   position: absolute;        /* на всякий */
   z-index: 9999;             /* выше рамки и контента */
   /* опционально сделай зону хвата комфортнее: */
@@ -170,17 +328,47 @@
 .journal-sheet.ct-wrapper .journal-page-content{
   font-size: var(--fs-body);
   line-height: var(--lh-body);
+  color: var(--ct-ink) !important;
 }
 
 /* заголовки */
-.journal-sheet.ct-wrapper .journal-page-content h1{ font-size: var(--fs-h1); }
-.journal-sheet.ct-wrapper .journal-page-content h2{ font-size: var(--fs-h2); }
-.journal-sheet.ct-wrapper .journal-page-content h3{ font-size: var(--fs-h3); }
+.journal-sheet.ct-wrapper .journal-page-content h1{
+  font-size: var(--fs-h1);
+  color: var(--ct-heading) !important;
+  opacity: 1 !important;
+}
+.journal-sheet.ct-wrapper .journal-page-content h2{
+  font-size: var(--fs-h2);
+  color: var(--ct-heading) !important;
+  opacity: 1 !important;
+}
+.journal-sheet.ct-wrapper .journal-page-content h3{
+  font-size: var(--fs-h3);
+  color: #4b1715 !important;
+  opacity: 1 !important;
+}
+.journal-sheet.ct-wrapper .journal-page-content h4{
+  margin: .55rem 0 .25rem;
+  padding: 0;
+  border: 0;
+  font-family: var(--font-body);
+  font-size: calc(var(--fs-body) + 1px);
+  font-weight: 700;
+  color: #5a1714 !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45);
+}
 
 /* чуть компактнее абзацы/списки */
 .journal-sheet.ct-wrapper .journal-page-content p{ margin: 0.65em 0; }
 .journal-sheet.ct-wrapper .journal-page-content ul,
 .journal-sheet.ct-wrapper .journal-page-content ol{ margin: 0.65em 0 0.65em 1.25em; }
+.journal-sheet.ct-wrapper .journal-page-content p,
+.journal-sheet.ct-wrapper .journal-page-content li,
+.journal-sheet.ct-wrapper .journal-page-content td,
+.journal-sheet.ct-wrapper .journal-page-content th {
+  color: var(--ct-ink) !important;
+}
 /* базовая цитата (работает на обычном >blockquote в редакторе) */
 .journal-sheet.ct-wrapper .journal-page-content blockquote{
   position: relative;
@@ -282,18 +470,25 @@
 /* 4) «Карточка» страницы чуть светлее по краям (внутренняя тень) */
 .journal-sheet.ct-wrapper .journal-page-content{
   box-shadow:
-    0 4px 24px rgba(0,0,0,.25),
-    inset 0 0 0 1px rgba(0,0,0,.06),
-    inset 0 12px 24px rgba(0,0,0,.05);
+    0 10px 34px rgba(0,0,0,.30),
+    0 0 0 1px rgba(80,44,24,.12),
+    inset 0 0 0 1px rgba(255,255,255,.42),
+    inset 0 14px 28px rgba(80,44,24,.07);
 }
 
 /* 5) Сайдбар: ховер по строкам и текущая страница */
 .journal-sheet.ct-wrapper .journal-sidebar .directory-item:hover{
-  background: rgba(255,255,255,.06);
+  background:
+    linear-gradient(90deg, rgba(255,226,190,.12), rgba(255,226,190,.03)),
+    rgba(35,0,7,.22);
 }
 .journal-sheet.ct-wrapper .journal-sidebar .directory-item.active{
-  background: rgba(255,255,255,.12);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
+  background:
+    linear-gradient(90deg, rgba(255,226,190,.18), rgba(140,27,27,.22)),
+    rgba(25,0,6,.32);
+  box-shadow:
+    inset 3px 0 0 rgba(245,205,146,.72),
+    inset 0 0 0 1px rgba(255,255,255,.18);
 }
 /* h2 — центрированный разделитель как у h1, но чуть меньше */
 .journal-sheet.ct-wrapper .journal-page-content h2{
@@ -367,9 +562,9 @@
 
 .journal-sheet.ct-wrapper .journal-page-content {
   background:
-    radial-gradient(circle at 15% 8%, rgba(255,255,255,.55), transparent 30%),
-    radial-gradient(circle at 90% 18%, rgba(140,27,27,.08), transparent 28%),
-    linear-gradient(180deg, rgba(255,255,255,.28), rgba(122,70,35,.08)),
+    radial-gradient(circle at 15% 8%, rgba(255,255,255,.62), transparent 30%),
+    radial-gradient(circle at 92% 18%, rgba(140,27,27,.06), transparent 28%),
+    linear-gradient(180deg, rgba(255,255,255,.24), rgba(120,68,32,.10)),
     var(--ct-paper);
 }
 
@@ -382,18 +577,31 @@
 .journal-sheet.ct-wrapper .journal-page-content a.inline-roll,
 .journal-sheet.ct-wrapper .journal-page-content span.content-link,
 .journal-sheet.ct-wrapper .journal-page-content span.inline-roll {
-  background: rgba(140,27,27,.08);
-  border: 1px solid rgba(140,27,27,.22);
+  background: rgba(140,27,27,.07) !important;
+  border: 1px solid rgba(140,27,27,.22) !important;
   border-radius: 5px;
-  color: var(--ct-accent);
+  box-shadow: none !important;
+  color: #7b211c !important;
   padding: 0 4px;
   text-decoration: none;
+  text-shadow: none !important;
 }
 
 .journal-sheet.ct-wrapper .journal-page-content a.content-link:hover,
 .journal-sheet.ct-wrapper .journal-page-content a.inline-roll:hover {
-  background: rgba(140,27,27,.14);
-  text-shadow: none;
+  background: rgba(140,27,27,.13) !important;
+  text-shadow: none !important;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout :is(a.content-link, a.inline-roll, span.content-link, span.inline-roll) {
+  background: rgba(255,255,255,.46) !important;
+  border-color: rgba(126,60,38,.24) !important;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content :is(a.content-link, a.inline-roll, span.content-link, span.inline-roll) i,
+.journal-sheet.ct-wrapper .journal-page-content :is(a.content-link, a.inline-roll, span.content-link, span.inline-roll) .fa,
+.journal-sheet.ct-wrapper .journal-page-content :is(a.content-link, a.inline-roll, span.content-link, span.inline-roll) .fas {
+  color: #7b211c !important;
 }
 
 .journal-sheet.ct-wrapper .journal-page-content blockquote {
@@ -406,39 +614,139 @@
 }
 
 .journal-sheet.ct-wrapper .journal-page-content blockquote::after {
-  content: "";
-  position: absolute;
-  right: 12px;
-  bottom: 8px;
-  width: 72px;
-  height: 8px;
-  background: var(--div-img) repeat-x center;
-  background-size: 96px 8px;
-  opacity: .35;
-  pointer-events: none;
+  display: none;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content blockquote,
+.journal-sheet.ct-wrapper .journal-page-content blockquote p,
+.journal-sheet.ct-wrapper .journal-page-content blockquote li,
+.journal-sheet.ct-wrapper .journal-page-content blockquote td,
+.journal-sheet.ct-wrapper .journal-page-content blockquote th,
+.journal-sheet.ct-wrapper .journal-page-content blockquote em {
+  color: var(--q-ink) !important;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content blockquote strong,
+.journal-sheet.ct-wrapper .journal-page-content blockquote h1,
+.journal-sheet.ct-wrapper .journal-page-content blockquote h2,
+.journal-sheet.ct-wrapper .journal-page-content blockquote h3,
+.journal-sheet.ct-wrapper .journal-page-content blockquote h4 {
+  color: #fff0e6 !important;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content blockquote a,
+.journal-sheet.ct-wrapper .journal-page-content blockquote a.content-link,
+.journal-sheet.ct-wrapper .journal-page-content blockquote a.inline-roll,
+.journal-sheet.ct-wrapper .journal-page-content blockquote span.content-link,
+.journal-sheet.ct-wrapper .journal-page-content blockquote span.inline-roll {
+  color: #ffe0d6 !important;
+  border-color: rgba(255,224,214,.35);
+  background: rgba(255,255,255,.12);
 }
 
 .journal-sheet.ct-wrapper .journal-page-content .ct-handout {
   position: relative;
+  --ct-block-accent: #7c2a24;
+  --ct-block-heading: #4d211b;
+  --ct-block-bg1: rgba(255,251,241,.95);
+  --ct-block-bg2: rgba(237,225,204,.9);
+  --ct-block-symbol: "";
+  --ct-block-mark: none;
   color: #26160f;
-  background:
-    radial-gradient(circle at 16% 18%, rgba(255,255,255,.62), transparent 34%),
-    radial-gradient(circle at 82% 92%, rgba(120,72,20,.15), transparent 30%),
-    linear-gradient(180deg, rgba(255,252,235,.92), rgba(230,201,146,.68));
+  border: 1px solid rgba(88,52,30,.18);
+  border-left: 5px solid var(--ct-block-accent);
+  border-radius: 6px;
+  background: linear-gradient(180deg, var(--ct-block-bg1), var(--ct-block-bg2));
   box-shadow:
-    0 6px 18px rgba(56,32,12,.22),
-    inset 0 0 26px rgba(108,65,20,.16);
+    0 3px 10px rgba(56,32,12,.13),
+    inset 0 1px 0 rgba(255,255,255,.48);
 }
 
-.journal-sheet.ct-wrapper .journal-page-content .ct-handout h3 {
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout::before {
+  content: var(--ct-block-mark);
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.45rem;
+  height: 1.45rem;
+  padding: 0 .28rem;
+  border: 1px solid rgba(92,50,34,.22);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 32% 25%, rgba(255,255,255,.72), transparent 42%),
+    rgba(255,255,255,.58);
+  color: var(--ct-block-accent);
+  font-family: var(--font-body);
+  font-size: .72rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity: .72;
+  pointer-events: none;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout:is(.ct-check, .ct-clue) {
+  --ct-block-accent: #3f6970;
+  --ct-block-heading: #234950;
+  --ct-block-bg1: rgba(241,249,247,.95);
+  --ct-block-bg2: rgba(218,234,230,.9);
+  --ct-block-mark: "КС";
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-hazard,
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-danger,
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-trap {
+  --ct-block-accent: #8b1f18;
+  --ct-block-heading: #5a1611;
+  --ct-block-bg1: rgba(255,246,238,.95);
+  --ct-block-bg2: rgba(239,216,201,.9);
+  --ct-block-mark: "!";
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-encounter,
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-creatures {
+  --ct-block-accent: #5c4b76;
+  --ct-block-heading: #3b304f;
+  --ct-block-bg1: rgba(247,244,250,.95);
+  --ct-block-bg2: rgba(226,219,234,.9);
+  --ct-block-mark: "БОЙ";
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-development {
+  --ct-block-accent: #6f5a2a;
+  --ct-block-heading: #4b3b18;
+  --ct-block-bg1: rgba(255,251,235,.95);
+  --ct-block-bg2: rgba(237,226,194,.9);
+  --ct-block-mark: ">";
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout :is(h3, h4) {
+  position: relative;
   margin-top: 0;
-  color: #571414;
+  padding: 0;
+  border: 0;
+  color: var(--ct-block-heading);
   text-transform: uppercase;
   letter-spacing: .035em;
 }
 
-.journal-sheet.ct-wrapper .journal-page-content .ct-handout h3::after {
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout :is(h3, h4)::before {
+  content: var(--ct-block-symbol);
+  color: var(--ct-block-accent);
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout :is(h3, h4)::after {
+  content: "";
+  position: static;
+  display: block;
+  height: 2px;
   width: min(65%, 360px);
+  margin-top: .25rem;
+  background: linear-gradient(90deg, var(--ct-block-accent), rgba(140,27,27,.12));
+  border-radius: 2px;
+  box-shadow: none;
 }
 
 .journal-sheet.ct-wrapper .journal-page-content .ct-handout > :first-child {
@@ -451,20 +759,69 @@
 
 .journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-treasure,
 .journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-award {
+  --ct-block-accent: #9a6b1f;
+  --ct-block-heading: #5a3d12;
+  --ct-block-symbol: "◆ ";
+  --ct-block-mark: "ЗМ";
+  --ct-block-bg1: rgba(255,248,218,.95);
+  --ct-block-bg2: rgba(231,210,151,.9);
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-award {
+  --ct-block-accent: #8c1b1b;
+  --ct-block-heading: #571414;
+  --ct-block-symbol: "✦ ";
+  --ct-block-mark: "XP";
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-source {
+  display: block;
+  margin-top: .65rem;
+  color: #6d5a42;
+  font-size: .88em;
+  font-style: italic;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content :is(.pf2-icon, .action-glyph) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35em;
+  height: 1.35em;
+  padding: 0 .28em;
+  border-radius: 999px;
+  background: rgba(42,24,18,.12);
+  border: 1px solid rgba(42,24,18,.22);
+  color: #381b14;
+  font-family: var(--font-body);
+  font-size: .86em;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: .08em;
+}
+
+.journal-sheet.ct-wrapper .journal-page-content .ct-readaloud {
+  display: block;
+  margin: 0.9em 0;
+  padding: 12px 16px 12px 18px;
+  color: var(--q-ink) !important;
   background:
-    radial-gradient(circle at 20% 15%, rgba(255,255,255,.72), transparent 30%),
-    radial-gradient(circle at 90% 85%, rgba(151,111,34,.22), transparent 35%),
-    linear-gradient(180deg, rgba(255,246,205,.95), rgba(218,174,92,.72));
+    linear-gradient(90deg, rgba(255,255,255,.08), transparent 16%),
+    linear-gradient(180deg, #3a0f12, #5a1115 72%, #431014);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px var(--q-shadow);
 }
 
-.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-treasure h3::before {
-  content: "◆ ";
-  color: #9d6b18;
-}
-
-.journal-sheet.ct-wrapper .journal-page-content .ct-handout.ct-award h3::before {
-  content: "✦ ";
-  color: #8c1b1b;
+.journal-sheet.ct-wrapper .journal-page-content .ct-break {
+  display: block;
+  width: min(72%, 620px);
+  height: 12px;
+  margin: 1.25rem auto;
+  border: 0;
+  background: var(--div-img) repeat-x center;
+  background-size: 132px 10px;
+  opacity: .72;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,.45));
 }
 
 .journal-sheet.ct-wrapper .journal-page-content table {

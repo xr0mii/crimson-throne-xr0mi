@@ -1,11 +1,11 @@
 {
   "id": "crimson-throne-xr0mi",
   "title": "xr0mi-adv: Проклятие Багряного Трона",
-  "version": "3.0.1",
+  "version": "3.1.15",
   "socket": true,
   "compatibility": {
     "minimum": "13",
-    "verified": "13"
+    "verified": "14"
   },
   "description": "<p>Конвертация приключения \"Проклятие Багряного Трона\" от xr0mi с переводом на русский.</p>",
   "authors": [
@@ -18,21 +18,16 @@
   ],
   "url": "https://boosty.to/xr0mi",
   "styles": [
-    {
-      "src": "styles/ct-journal.css"
-    },
-    {
-      "src": "styles/harrow-tracker.css"
-    },
-    {
-      "src": "styles/blood-pig.css"
-    },
-    {
-      "src": "styles/carrington-board.css"
-    }
+    "styles/ct-journal.css",
+    "styles/ct-adventure-importer.css",
+    "styles/harrow-tracker.css",
+    "styles/blood-pig.css",
+    "styles/carrington-board.css"
   ],
   "scripts": [
+    "scripts/ct-foundry-compat.js",
     "scripts/ct-journal.js",
+    "scripts/ct-adventure-importer.js",
     "scripts/harrow-tracker.js",
     "scripts/blood-pig.js",
     "scripts/carrington-board.js"
@@ -62,16 +57,13 @@
       {
         "id": "pf2e",
         "type": "system",
-        "compatibility": {}
+        "compatibility": {
+          "minimum": "7.8.0",
+          "verified": "8.2.0"
+        }
       }
     ],
     "requires": [
-      {
-        "id": "levels",
-        "type": "module",
-        "manifest": "https://github.com/theripper93/Levels/releases/download/6.0.15/module.json",
-        "compatibility": {}
-      },
       {
         "id": "pf2e-ru",
         "type": "module",

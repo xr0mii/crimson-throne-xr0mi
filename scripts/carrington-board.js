@@ -1,6 +1,13 @@
 // Madame Carrington communication helper for Foundry VTT v13+
 (function(){
   const MOD = "crimson-throne-xr0mi";
+  const CT = globalThis.CrimsonThroneCompat;
+  const BaseApplication = CT?.getTemplateApplicationBase?.();
+
+  if (!BaseApplication) {
+    console.warn(`[${MOD}] Carrington board disabled: no compatible Application API found.`);
+    return;
+  }
 
   const PRESETS = [
     "Вы пришли вопрошать живых или мёртвых?",
@@ -85,9 +92,22 @@
     return null;
   }
 
-  class CarringtonBoardApp extends Application {
+  class CarringtonBoardApp extends BaseApplication {
+    static get DEFAULT_OPTIONS() {
+      return CT.v2Options({
+        id: "ct-carrington-board",
+        title: "Доска мадам Каррингтон",
+        classes: ["ct-carrington-app", "sheet"],
+        width: 430
+      });
+    }
+
+    static get PARTS() {
+      return CT.singleTemplatePart(`modules/${MOD}/templates/carrington-board.html`);
+    }
+
     static get defaultOptions() {
-      return foundry.utils.mergeObject(super.defaultOptions, {
+      return CT.v1Options(super.defaultOptions, {
         id: "ct-carrington-board",
         title: "Доска мадам Каррингтон",
         template: `modules/${MOD}/templates/carrington-board.html`,
@@ -98,12 +118,21 @@
       });
     }
 
+    async _prepareContext(options) {
+      return this.getData(options);
+    }
+
+    async _onRender(context, options) {
+      await super._onRender?.(context, options);
+      this.activateListeners(CT.asHtml(CT.part(this, ".ct-carrington")));
+    }
+
     getData() {
       return { presets: PRESETS };
     }
 
     activateListeners(html) {
-      super.activateListeners(html);
+      super.activateListeners?.(html);
 
       html.on("change", ".ct-carrington-preset", (event) => {
         const value = event.currentTarget.value ?? "";

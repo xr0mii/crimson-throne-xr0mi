@@ -1,10 +1,10 @@
 /* Madame Carrington oneiromancy helper */
-.window-app.ct-carrington-app .window-header {
+:is(.window-app, .application).ct-carrington-app .window-header {
   background: linear-gradient(180deg, #211821, #3f2432);
   color: #fff3e8;
 }
 
-.window-app.ct-carrington-app .window-content {
+:is(.window-app, .application).ct-carrington-app .window-content {
   background:
     radial-gradient(circle at 20% 0%, rgba(100, 74, 99, 0.22), transparent 38%),
     linear-gradient(180deg, #f4eadc, #e8d8c4);

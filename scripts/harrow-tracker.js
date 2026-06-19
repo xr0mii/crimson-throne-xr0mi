@@ -3,10 +3,30 @@
 (function(){
   const MOD = "crimson-throne-xr0mi";
   const FLAG_KEY = "harrowPoints";
+  const CT = globalThis.CrimsonThroneCompat;
+  const BaseApplication = CT?.getTemplateApplicationBase?.();
 
-  class HarrowTracker extends Application {
+  if (!BaseApplication) {
+    console.warn(`[${MOD}] Harrow tracker disabled: no compatible Application API found.`);
+    return;
+  }
+
+  class HarrowTracker extends BaseApplication {
+    static get DEFAULT_OPTIONS() {
+      return CT.v2Options({
+        id: "harrow-tracker",
+        title: "Очки Харроу",
+        classes: ["harrow-tracker", "sheet"],
+        width: 420
+      });
+    }
+
+    static get PARTS() {
+      return CT.singleTemplatePart(`modules/${MOD}/templates/harrow-tracker.html`);
+    }
+
     static get defaultOptions() {
-      return foundry.utils.mergeObject(super.defaultOptions, {
+      return CT.v1Options(super.defaultOptions, {
         id: "harrow-tracker",
         title: "Очки Харроу",
         template: `modules/${MOD}/templates/harrow-tracker.html`,
@@ -18,6 +38,15 @@
     }
 
     get isGM() { return game.user?.isGM; }
+
+    async _prepareContext(options) {
+      return this.getData(options);
+    }
+
+    async _onRender(context, options) {
+      await super._onRender?.(context, options);
+      this.activateListeners(CT.asHtml(CT.part(this, ".harrow-tracker")));
+    }
 
     getData() {
       const currentUser = game.user;
@@ -42,7 +71,7 @@
     }
 
     activateListeners(html) {
-      super.activateListeners(html);
+      super.activateListeners?.(html);
 
       const setBusy = (busy)=> html.find("button, input").prop("disabled", !!busy);
 
@@ -87,6 +116,32 @@
     _harrowApp.render(true, { focus: true });
   }
 
+  function injectActorSheetButton(app, html) {
+    try {
+      if (!app?.actor && !app?.document) return;
+      const actor = app.actor ?? app.document;
+      if (actor?.type !== "character") return;
+
+      const root = CT.asElement(html) ?? CT.asElement(app.element) ?? app.element;
+      const frame = root?.closest?.(".application, .window-app, .app") ?? root;
+      if (!frame?.querySelector || frame.querySelector(".harrow-open")) return;
+
+      const header = frame.querySelector(".window-header");
+      if (!header) return;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "header-control harrow-open";
+      button.title = "Очки Харроу";
+      button.innerHTML = '<i class="fas fa-swatchbook"></i>';
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        toggleHarrowTracker();
+      });
+      header.append(button);
+    } catch (_e) { /* no-op */ }
+  }
+
   // Button in Actor sheet header
   Hooks.on("getActorSheetHeaderButtons", (app, buttons) => {
     try {
@@ -98,6 +153,10 @@
       });
     } catch (_e) { /* no-op */ }
   });
+
+  Hooks.on("renderActorSheet", injectActorSheetButton);
+  Hooks.on("renderActorSheetPF2e", injectActorSheetButton);
+  Hooks.on("renderCharacterSheetPF2e", injectActorSheetButton);
 
   // (По запросу) — удалил кнопку в HUD токена
 

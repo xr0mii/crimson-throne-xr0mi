@@ -6,17 +6,18 @@
 }
 
 /* Header with crimson texture */
-.window-app.harrow-tracker .window-header {
+:is(.window-app, .application).harrow-tracker .window-header {
   background:
     linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.2)),
     linear-gradient(90deg, #5a1115, #8c1b1b);
   color: #fff7f4;
   border-bottom: 2px solid var(--ct-ht-accent-2);
 }
-.window-app.harrow-tracker .window-header .window-title { text-shadow: 0 1px 0 rgba(0,0,0,.6); }
-.window-app.harrow-tracker .window-header a { color: #ffe6e1; }
+:is(.window-app, .application).harrow-tracker .window-header .window-title { text-shadow: 0 1px 0 rgba(0,0,0,.6); }
+:is(.window-app, .application).harrow-tracker .window-header a { color: #ffe6e1; }
 
-.harrow-tracker.ct-theme .window-content {
+:is(.window-app, .application).harrow-tracker .window-content,
+.harrow-tracker.ct-theme {
   background:
     linear-gradient(rgba(255,255,255,.65), rgba(255,255,255,.65)),
     url("../assets/bg/crimson-tile.png");
@@ -82,4 +83,3 @@
 .harrow-tracker .hp-reset.ct-btn:hover { background: #fff3f3; border-color: var(--ct-ht-accent-2); }
 
 .harrow-tracker .ct-btn.ct-btn--sm i { pointer-events: none; }
-

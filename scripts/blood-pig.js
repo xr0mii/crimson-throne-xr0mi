@@ -3,6 +3,13 @@
   const MOD = "crimson-throne-xr0mi";
   const SETTING = "bloodPigState";
   const VICTORY_SOUND = `modules/${MOD}/assets/sounds/final-fantasy-vii-victory-fanfare-hq-cut_ym0q870.mp3`;
+  const CT = globalThis.CrimsonThroneCompat;
+  const BaseApplication = CT?.getTemplateApplicationBase?.();
+
+  if (!BaseApplication) {
+    console.warn(`[${MOD}] Blood Pig helper disabled: no compatible Application API found.`);
+    return;
+  }
 
   const DEFAULT_STATE = {
     pcScore: 0,
@@ -147,8 +154,9 @@
 
   async function playVictorySound() {
     try {
-      if (globalThis.AudioHelper?.play) {
-        await AudioHelper.play({ src: VICTORY_SOUND, volume: 0.8, autoplay: true, loop: false }, true);
+      const AudioHelperClass = globalThis.AudioHelper ?? foundry?.audio?.AudioHelper;
+      if (AudioHelperClass?.play) {
+        await AudioHelperClass.play({ src: VICTORY_SOUND, volume: 0.8, autoplay: true, loop: false }, true);
       } else {
         const audio = new Audio(VICTORY_SOUND);
         audio.volume = 0.8;
@@ -278,9 +286,22 @@
     if (restrained !== null) await setPigCondition(state, "restrained", !!restrained, { warn });
   }
 
-  class BloodPigApp extends Application {
+  class BloodPigApp extends BaseApplication {
+    static get DEFAULT_OPTIONS() {
+      return CT.v2Options({
+        id: "ct-blood-pig",
+        title: "Кровавый кабан",
+        classes: ["blood-pig-app", "sheet"],
+        width: 500
+      });
+    }
+
+    static get PARTS() {
+      return CT.singleTemplatePart(`modules/${MOD}/templates/blood-pig.html`);
+    }
+
     static get defaultOptions() {
-      return foundry.utils.mergeObject(super.defaultOptions, {
+      return CT.v1Options(super.defaultOptions, {
         id: "ct-blood-pig",
         title: "Кровавый кабан",
         template: `modules/${MOD}/templates/blood-pig.html`,
@@ -289,6 +310,15 @@
         height: "auto",
         resizable: true
       });
+    }
+
+    async _prepareContext(options) {
+      return this.getData(options);
+    }
+
+    async _onRender(context, options) {
+      await super._onRender?.(context, options);
+      this.activateListeners(CT.asHtml(CT.part(this, ".blood-pig")));
     }
 
     async getData() {
@@ -307,7 +337,7 @@
     }
 
     activateListeners(html) {
-      super.activateListeners(html);
+      super.activateListeners?.(html);
 
       html.on("change", ".bp-state-field", async (ev) => {
         const field = ev.currentTarget.dataset.field;
