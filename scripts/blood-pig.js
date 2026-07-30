@@ -12,6 +12,7 @@
   }
 
   const DEFAULT_STATE = {
+    targetScore: 3,
     pcScore: 0,
     emperorScore: 0,
     pigSide: "c4a",
@@ -55,13 +56,17 @@
     }
   };
 
-  function clampScore(value) {
-    return Math.min(5, Math.max(0, Number(value) || 0));
+  function targetScore(value) {
+    return Math.min(5, Math.max(1, Number(value) || 3));
+  }
+
+  function clampScore(value, target = 5) {
+    return Math.min(targetScore(target), Math.max(0, Number(value) || 0));
   }
 
   function victoryTeam(state) {
-    if (state.pcScore >= 5) return "pc";
-    if (state.emperorScore >= 5) return "emperor";
+    if (state.pcScore >= state.targetScore) return "pc";
+    if (state.emperorScore >= state.targetScore) return "emperor";
     return "";
   }
 
@@ -70,65 +75,82 @@
   }
 
   const CARD_CONTENT = {
-    grab: `
-      <div class="ct-blood-pig-card">
-        <h3>Схватить поросёнка <span class="action-glyph">1</h3>
-        <p><strong>Признаки:</strong> атака, Атлетика, навык</p>
-        <p><strong>Требования:</strong> у вас есть хотя бы одна свободная рука.</p>
-        <p>Совершите @Check[type:athletics|dc:15]{проверку Атлетики со СЛ 15}. Вы также можете использовать это действие, чтобы удержать уже схваченного поросёнка.</p>
-        <p><strong>Критический успех:</strong> поросёнок сдерживаем, и до конца вашего следующего хода он считается обмякшим.</p>
-        <p><strong>Успех:</strong> поросёнок схвачен до начала вашего следующего хода.</p>
-        <p><strong>Провал:</strong> вы не схватили поросёнка. Если он уже был у вас сдерживаем или схвачен, это состояние заканчивается, и поросёнок вырывается.</p>
-      </div>`,
-    throw: `
-      <div class="ct-blood-pig-card">
-        <h3>Бросить поросёнка <span class="action-glyph">1</h3>
-        <p><strong>Признаки:</strong> атака, Атлетика, навык</p>
-        <p><strong>Требования:</strong> у вас есть сдерживаемый поросёнок.</p>
-        <p>До 10 футов бросок считается автоматическим успехом. Дальше 10 футов совершите проверку Атлетики против СЛ 15 + 1 за каждые 5 футов сверх 10.</p>
-        <p><strong>Успех:</strong> вы бросаете поросёнка в выбранную цель. Цель может попытаться поймать его, если у неё есть свободная реакция.</p>
-        <p><strong>Провал:</strong> поросёнок падает на землю и получает состояние ничком.</p>
-        <p><strong>Критический провал:</strong> поросёнок падает и на инициативе 0 бежит по прямой от ближайшего человека со скоростью 30 футов.</p>
-      </div>`,
-    catch: `
-      <div class="ct-blood-pig-card">
-        <h3>Поймать поросёнка <span class="action-glyph">5</h3>
-        <p><strong>Признаки:</strong> Атлетика, навык</p>
-        <p><strong>Триггер:</strong> вы стали целью брошенного поросёнка или поросёнок пролетает через клетку, которую вы угрожаете.</p>
-        <p><strong>Требования:</strong> у вас должна быть свободная рука; вы можете Отпустить всё, что держите, как часть реакции.</p>
-        <p>Совершите @Check[type:athletics|dc:11]{проверку Атлетики со СЛ 11}, чтобы поймать поросёнка. Для перехвата используйте @Check[type:athletics|dc:24]{СЛ 24}.</p>
-        <p><strong>Успех:</strong> вы ловите поросёнка, и он получает состояние схвачен.</p>
-        <p><strong>Провал:</strong> поросёнок падает на землю и получает состояние ничком.</p>
-        <p><strong>Критический провал:</strong> поросёнок падает и на инициативе 0 бежит по прямой от ближайшего человека со скоростью 30 футов.</p>
-      </div>`,
-    squirm: `
-      <div class="ct-blood-pig-card">
-        <h3>Брыкающийся поросёнок</h3>
-        <table>
-          <tr><th>d6</th><th>Результат</th></tr>
-          <tr><td>1</td><td><strong>Обмяк:</strong> ничего не делает.</td></tr>
-          <tr><td>2</td><td><strong>Извивается:</strong> @Check[type:athletics|dc:15]{Атлетика СЛ 15} или уронить.</td></tr>
-          <tr><td>3</td><td><strong>Визжит:</strong> толпа смеётся.</td></tr>
-          <tr><td>4</td><td><strong>Кусается:</strong> +8 Удар укусом, 1d4+1 колющего урона.</td></tr>
-          <tr><td>5</td><td><strong>Лягается:</strong> @Check[type:acrobatics|dc:15]{Акробатика СЛ 15} или уронить.</td></tr>
-          <tr><td>6</td><td><strong>Паникует:</strong> визг, укус, извивание и пинок одновременно.</td></tr>
-        </table>
-      </div>`,
-    rules: `
-      <div class="ct-blood-pig-card">
-        <h3>Кровавый кабан: краткие правила</h3>
-        <p><strong>Цель:</strong> первой набрать 5 очков.</p>
-        <p><strong>Очко:</strong> поместить поросёнка в яму своей команды. Яма героев: C4f. Яма Шинглснайпов: C4b.</p>
-        <p><strong>Нельзя:</strong> оружие и заклинания. За каждое нарушение противники получают 1 очко.</p>
-        <p><strong>Уронить поросёнка:</strong> при получении урона с живым поросёнком в руках пройдите Атлетику: СЛ 10 + полученный урон.</p>
-        <p><strong>Передача:</strong> Взаимодействие соседнему союзнику; получатель тратит реакцию.</p>
-      </div>`
+    retrieve: `<div class="ct-blood-pig-card">
+      <h3>Достать поросёнка <span class="action-glyph">2</span></h3>
+      <p><strong>Признаки:</strong> атака, воздействие, Атлетика, навык</p>
+      <p><strong>Требования:</strong> вы рядом с закрытой клеткой, в которой есть поросёнок, и у вас свободна хотя бы одна рука.</p>
+      <p>Вы открываете клетку и немедленно пытаетесь схватить поросёнка. Совершите @Check[type:athletics|dc:15]{проверку Атлетики со СЛ 15}. Эта активность неделима и не может быть Заготовлена. До её завершения другие существа не могут взаимодействовать с поросёнком.</p>
+      <p><strong>Критический успех:</strong> вы достаёте и сдерживаете поросёнка; до конца вашего следующего хода он считается обмякшим.</p>
+      <p><strong>Успех:</strong> вы достаёте и удерживаете поросёнка до начала своего следующего хода.</p>
+      <p><strong>Провал:</strong> клетка открыта, но поросёнок остаётся внутри. Теперь его можно схватить отдельным действием.</p>
+      <p><strong>Критический провал:</strong> поросёнок вырывается из клетки, падает рядом с ней ничком и начинает убегать.</p>
+    </div>`,
+    grab: `<div class="ct-blood-pig-card">
+      <h3>Схватить поросёнка <span class="action-glyph">1</span></h3>
+      <p><strong>Признаки:</strong> атака, Атлетика, навык</p>
+      <p><strong>Требования:</strong> у вас есть хотя бы одна свободная рука.</p>
+      <p>Схватите поросёнка на поле, в открытой клетке или удержите уже пойманного. Совершите @Check[type:athletics|dc:15]{проверку Атлетики со СЛ 15}.</p>
+      <p><strong>Критический успех:</strong> вы сдерживаете поросёнка; до конца вашего следующего хода он считается обмякшим.</p>
+      <p><strong>Успех:</strong> вы удерживаете поросёнка до начала своего следующего хода.</p>
+      <p><strong>Провал:</strong> вы не хватаете поросёнка. Если вы пытались продлить удержание, он вырывается.</p>
+    </div>`,
+    throw: `<div class="ct-blood-pig-card">
+      <h3>Бросить поросёнка <span class="action-glyph">1</span></h3>
+      <p><strong>Признаки:</strong> атака, Атлетика, навык</p>
+      <p><strong>Требования:</strong> вы удерживаете или сдерживаете поросёнка.</p>
+      <p>СЛ равна 15 на расстоянии до 10 футов и увеличивается на 1 за каждые следующие 5 футов. Отпустить поросёнка в соседнюю яму можно без проверки.</p>
+      <p>@Check[type:athletics|dc:15]{До 10 футов — СЛ 15} · @Check[type:athletics|dc:16]{15 футов — СЛ 16} · @Check[type:athletics|dc:17]{20 футов — СЛ 17}</p>
+      <p><strong>Успех:</strong> вы бросаете поросёнка в выбранную цель. Цель может попытаться поймать его реакцией.</p>
+      <p><strong>Провал:</strong> поросёнок падает на землю и получает состояние ничком.</p>
+      <p><strong>Критический провал:</strong> поросёнок падает и на инициативе 0 бежит от ближайшего человека со скоростью 30 футов.</p>
+    </div>`,
+    catch: `<div class="ct-blood-pig-card">
+      <h3>Поймать поросёнка <span class="action-glyph">5</span></h3>
+      <p><strong>Признаки:</strong> Атлетика, навык</p>
+      <p><strong>Триггер:</strong> вы стали целью брошенного поросёнка или он пролетает через занимаемую вами клетку.</p>
+      <p><strong>Требования:</strong> у вас свободна рука; вы можете Отпустить удерживаемый предмет как часть реакции.</p>
+      <p>@Check[type:athletics|dc:11]{СЛ 11}, чтобы поймать направленный вам бросок. Для перехвата используйте @Check[type:athletics|dc:24]{СЛ 24}.</p>
+      <p><strong>Успех:</strong> вы ловите и удерживаете поросёнка до начала своего следующего хода.</p>
+      <p><strong>Провал:</strong> поросёнок падает на землю и получает состояние ничком.</p>
+      <p><strong>Критический провал:</strong> поросёнок падает и начинает убегать.</p>
+    </div>`,
+    steal: `<div class="ct-blood-pig-card">
+      <h3>Украсть поросёнка <span class="action-glyph">1</span></h3>
+      <p><strong>Признаки:</strong> атака, Атлетика, навык</p>
+      <p><strong>Требования:</strong> у вас есть свободная рука, а соседнее существо удерживает поросёнка.</p>
+      <p>Попытайтесь @Check[athletics|against:reflex]{Обезоружить} носителя. В отличие от обычного Обезоруживания, поросёнок переходит к вам уже при успехе.</p>
+      <p><strong>Критический успех:</strong> вы выхватываете и сдерживаете поросёнка; до конца вашего следующего хода он считается обмякшим.</p>
+      <p><strong>Успех:</strong> вы выхватываете и удерживаете поросёнка, затем немедленно определяете его брыкание.</p>
+      <p><strong>Провал:</strong> носитель сохраняет поросёнка.</p>
+      <p><strong>Критический провал:</strong> вы застигнуты врасплох до начала своего следующего хода.</p>
+    </div>`,
+    squirm: `<div class="ct-blood-pig-card">
+      <h3>Брыкающийся поросёнок</h3><table>
+        <tr><th>d6</th><th>Результат</th></tr>
+        <tr><td>1</td><td><strong>Обмяк:</strong> ничего не делает.</td></tr>
+        <tr><td>2</td><td><strong>Извивается:</strong> @Check[type:athletics|dc:15]{Атлетика СЛ 15} или уронить.</td></tr>
+        <tr><td>3</td><td><strong>Визжит:</strong> толпа смеётся.</td></tr>
+        <tr><td>4</td><td><strong>Кусается:</strong> +8 Удар укусом, 1d4+1 колющего урона.</td></tr>
+        <tr><td>5</td><td><strong>Лягается:</strong> @Check[type:acrobatics|dc:15]{Акробатика СЛ 15} или уронить.</td></tr>
+        <tr><td>6</td><td><strong>Паникует:</strong> визг, укус, извивание и пинок одновременно.</td></tr>
+      </table>
+    </div>`,
+    rules: `<div class="ct-blood-pig-card">
+      <h3>Кровавый кабан: краткие правила</h3>
+      <p><strong>Цель:</strong> первой набрать заданное Мастером число очков.</p>
+      <p><strong>Очко:</strong> поместить поросёнка в яму своей команды. Яма героев: C4f. Яма Шинглснайпов: C4b.</p>
+      <p><strong>Нельзя:</strong> оружие и заклинания. За нарушение противники получают 1 очко.</p>
+      <p><strong>Клетка:</strong> достать поросёнка можно только неделимой активностью за 2 действия; её нельзя Заготовить.</p>
+      <p><strong>Уронить:</strong> при получении урона пройдите Атлетику: СЛ 10 + полученный урон.</p>
+      <p><strong>Передача:</strong> Взаимодействие соседнему союзнику; получатель тратит реакцию.</p>
+    </div>`
   };
 
   function cloneState(state) {
     const cloned = foundry.utils.mergeObject(foundry.utils.deepClone(DEFAULT_STATE), state ?? {}, { inplace: false });
-    cloned.pcScore = clampScore(cloned.pcScore);
-    cloned.emperorScore = clampScore(cloned.emperorScore);
+    cloned.targetScore = targetScore(cloned.targetScore);
+    cloned.pcScore = clampScore(cloned.pcScore, cloned.targetScore);
+    cloned.emperorScore = clampScore(cloned.emperorScore, cloned.targetScore);
     return cloned;
   }
 
@@ -139,8 +161,9 @@
   async function setState(patch) {
     const current = await getState();
     const next = foundry.utils.mergeObject(current, patch, { inplace: false });
-    next.pcScore = clampScore(next.pcScore);
-    next.emperorScore = clampScore(next.emperorScore);
+    next.targetScore = targetScore(next.targetScore);
+    next.pcScore = clampScore(next.pcScore, next.targetScore);
+    next.emperorScore = clampScore(next.emperorScore, next.targetScore);
     await game.settings.set(MOD, SETTING, next);
     return next;
   }
@@ -286,14 +309,23 @@
     if (restrained !== null) await setPigCondition(state, "restrained", !!restrained, { warn });
   }
 
+  function showBloodPigToPlayers() {
+    if (!game.user?.isGM) return;
+    game.socket?.emit?.(`module.${MOD}`, { type: "blood-pig-open", userId: game.user.id });
+    ui.notifications?.info?.("Окно «Кровавого кабана» открыто у активных игроков.");
+  }
+
   class BloodPigApp extends BaseApplication {
     static get DEFAULT_OPTIONS() {
-      return CT.v2Options({
+      const options = CT.v2Options({
         id: "ct-blood-pig",
         title: "Кровавый кабан",
         classes: ["blood-pig-app", "sheet"],
-        width: 500
+        width: 560
       });
+      options.window.controls = [{ action: "showPlayers", icon: "fa-solid fa-users-viewfinder", label: "Показать игрокам", visible: !!game.user?.isGM }];
+      options.actions = { showPlayers() { showBloodPigToPlayers(); } };
+      return options;
     }
 
     static get PARTS() {
@@ -306,10 +338,16 @@
         title: "Кровавый кабан",
         template: `modules/${MOD}/templates/blood-pig.html`,
         classes: ["blood-pig-app", "sheet"],
-        width: 500,
+        width: 560,
         height: "auto",
         resizable: true
       });
+    }
+
+    _getHeaderButtons() {
+      const buttons = super._getHeaderButtons?.() ?? [];
+      if (game.user?.isGM) buttons.unshift({ label: "Показать игрокам", class: "bp-show-players", icon: "fas fa-users", onclick: showBloodPigToPlayers });
+      return buttons;
     }
 
     async _prepareContext(options) {
@@ -324,20 +362,29 @@
     async getData() {
       const state = await getState();
       const currentPigToken = pigToken(state);
+      const controlled = selectedToken();
+      const controlledId = controlled?.document?.id ?? controlled?.id ?? "";
       return {
         state,
-        selectedToken: tokenData(selectedToken()),
+        isGM: !!game.user?.isGM,
+        targetIsThree: state.targetScore === 3,
+        targetIsFive: state.targetScore === 5,
+        selectedToken: tokenData(controlled),
         pigToken: tokenData(currentPigToken),
+        canSquirm: !!game.user?.isGM || (!!controlledId && controlledId === state.carrierTokenId && !!controlled?.actor?.testUserPermission?.(game.user, "OWNER")),
         hasC4a: !!state.locations?.c4a,
         hasC4e: !!state.locations?.c4e,
-        pcWon: state.pcScore >= 5,
-        emperorWon: state.emperorScore >= 5,
-        winner: state.pcScore >= 5 ? "победа героев" : state.emperorScore >= 5 ? "победа Шинглснайпов" : ""
+        pcWon: state.pcScore >= state.targetScore,
+        emperorWon: state.emperorScore >= state.targetScore,
+        winner: state.pcScore >= state.targetScore ? "победа героев" : state.emperorScore >= state.targetScore ? "победа Шинглснайпов" : ""
       };
     }
 
     activateListeners(html) {
       super.activateListeners?.(html);
+      const root = html?.jquery ? html[0] : html?.[0] ?? html;
+      if (root?.dataset?.ctBloodPigBound === "true") return;
+      if (root?.dataset) root.dataset.ctBloodPigBound = "true";
 
       html.on("change", ".bp-state-field", async (ev) => {
         const field = ev.currentTarget.dataset.field;
@@ -378,11 +425,34 @@
         const team = ev.currentTarget.dataset.team;
         const delta = Number(ev.currentTarget.dataset.delta) || 0;
         const state = await getState();
-        if (team === "pc") state.pcScore = clampScore(state.pcScore + delta);
-        if (team === "emperor") state.emperorScore = clampScore(state.emperorScore + delta);
+        if (team === "pc") state.pcScore = clampScore(state.pcScore + delta, state.targetScore);
+        if (team === "emperor") state.emperorScore = clampScore(state.emperorScore + delta, state.targetScore);
         if (!victoryTeam(state)) state.victoryPlayed = false;
         await game.settings.set(MOD, SETTING, state);
         await handleVictory(state);
+        this.render();
+      });
+
+      html.on("change", ".bp-target-score", async (ev) => {
+        if (!game.user?.isGM) return;
+        const state = await getState();
+        state.targetScore = targetScore(ev.currentTarget.value);
+        state.pcScore = clampScore(state.pcScore, state.targetScore);
+        state.emperorScore = clampScore(state.emperorScore, state.targetScore);
+        state.victoryPlayed = false;
+        await game.settings.set(MOD, SETTING, state);
+        this.render();
+      });
+
+      html.on("click", ".bp-sudden-death", async () => {
+        if (!game.user?.isGM) return;
+        const state = await getState();
+        const tiedScore = Math.max(0, state.targetScore - 1);
+        state.pcScore = tiedScore;
+        state.emperorScore = tiedScore;
+        state.victoryPlayed = false;
+        await game.settings.set(MOD, SETTING, state);
+        await post(`<h3>Кровавый кабан: решающий поросёнок</h3><p>Счёт равный. Следующий поросёнок решит исход партии!</p>`, currentSpeaker(state));
         this.render();
       });
 
@@ -390,12 +460,12 @@
         const team = ev.currentTarget.dataset.team;
         const state = await getState();
         if (team === "pc") {
-          state.pcScore = clampScore(state.pcScore + 1);
+          state.pcScore = clampScore(state.pcScore + 1, state.targetScore);
           state.pigSide = "c4a";
           state.pigStatus = "Новый поросёнок в клетке C4a";
           await post(`<h3>Кровавый кабан</h3><p><strong>Очко героям!</strong> Новый поросёнок появляется в клетке C4a.</p>`, currentSpeaker(state));
         } else {
-          state.emperorScore = clampScore(state.emperorScore + 1);
+          state.emperorScore = clampScore(state.emperorScore + 1, state.targetScore);
           state.pigSide = "c4e";
           state.pigStatus = "Новый поросёнок в клетке C4e";
           await post(`<h3>Кровавый кабан</h3><p><strong>Очко Шинглснайпам!</strong> Новый поросёнок появляется в клетке C4e.</p>`, currentSpeaker(state));
@@ -510,7 +580,12 @@
       html.on("click", ".bp-reset-game", async () => {
         const state = await getState();
         await syncPigConditions(state, { prone: false, restrained: false });
-        await game.settings.set(MOD, SETTING, foundry.utils.deepClone(DEFAULT_STATE));
+        const next = foundry.utils.deepClone(DEFAULT_STATE);
+        next.targetScore = state.targetScore;
+        next.pigTokenId = state.pigTokenId;
+        next.pigTokenSceneId = state.pigTokenSceneId;
+        next.locations = foundry.utils.deepClone(state.locations ?? DEFAULT_STATE.locations);
+        await game.settings.set(MOD, SETTING, next);
         this.render();
       });
     }
@@ -534,6 +609,11 @@
   });
 
   Hooks.once("ready", () => {
+    game.socket?.on?.(`module.${MOD}`, (payload) => {
+      if (payload?.type !== "blood-pig-open") return;
+      const sender = game.users.get(payload.userId);
+      if (!game.user?.isGM && sender?.isGM) openBloodPig();
+    });
     const mod = game.modules.get(MOD);
     if (mod) {
       mod.api = mod.api || {};
@@ -543,5 +623,9 @@
 
   Hooks.on("controlToken", () => {
     if (app?.rendered) app.render();
+  });
+
+  Hooks.on("updateSetting", (setting) => {
+    if (!game.user?.isGM && setting?.key === `${MOD}.${SETTING}` && app?.rendered) app.render();
   });
 })();

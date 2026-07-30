@@ -1,6 +1,7 @@
 // Madame Carrington communication helper for Foundry VTT v13+
 (function(){
   const MOD = "crimson-throne-xr0mi";
+  const WRITING_SPEED = 80;
   const CT = globalThis.CrimsonThroneCompat;
   const BaseApplication = CT?.getTemplateApplicationBase?.();
 
@@ -46,7 +47,7 @@
     }, Number(speed) || 45);
   }
 
-  function showSceneMessage({ message, duration = 18000, speed = 45 } = {}) {
+  function showSceneMessage({ message, duration = 30000 } = {}) {
     const text = String(message ?? "").trim();
     if (!text) return;
 
@@ -70,24 +71,23 @@
 
     document.body.append(overlay);
     const messageElement = overlay.querySelector(".ct-carrington-overlay__message");
-    overlay._ctCarringtonTimer = typeMessage(messageElement, text, speed);
+    overlay._ctCarringtonTimer = typeMessage(messageElement, text, WRITING_SPEED);
     const timeout = Number(duration) || 0;
     if (timeout > 0) overlay._ctCarringtonTimeout = window.setTimeout(() => removeOverlay(overlay), timeout);
   }
 
-  async function sendCarringtonMessage({ message, duration = 18000, speed = 45 } = {}) {
+  async function sendCarringtonMessage({ message, duration = 30000 } = {}) {
     const text = String(message ?? "").trim();
     if (!text) {
       ui.notifications?.warn?.("Введите сообщение мадам Каррингтон.");
       return null;
     }
 
-    showSceneMessage({ message: text, duration, speed });
+    showSceneMessage({ message: text, duration });
     game.socket?.emit?.(`module.${MOD}`, {
       type: "carrington-message",
       message: text,
-      duration: Number(duration) || 0,
-      speed: Number(speed) || 45
+      duration: Number(duration) || 0
     });
     return null;
   }
@@ -144,8 +144,7 @@
         event.preventDefault();
         const message = html.find(".ct-carrington-message").val();
         const duration = html.find(".ct-carrington-duration").val();
-        const speed = html.find(".ct-carrington-speed").val();
-        await sendCarringtonMessage({ message, duration, speed });
+        await sendCarringtonMessage({ message, duration });
       });
     }
   }
@@ -161,30 +160,11 @@
     return app;
   }
 
-  function injectChatButton(_app, html) {
-    if (!game.user?.isGM) return;
-
-    const root = html?.jquery ? html[0] : html;
-    if (!root?.querySelector) return;
-    if (root.querySelector(".ct-carrington-chat-control")) return;
-
-    const controls = root.querySelector("#chat-controls") ?? root.querySelector(".chat-controls");
-    if (!controls) return;
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "ct-carrington-chat-control";
-    button.title = "Доска мадам Каррингтон";
-    button.innerHTML = '<i class="fas fa-moon"></i>';
-    button.addEventListener("click", openCarringtonBoard);
-    controls.append(button);
-  }
-
   Hooks.once("ready", () => {
     game.socket?.on?.(`module.${MOD}`, (payload) => {
       if (payload?.type !== "carrington-message") return;
       if (game.user?.isGM) return;
-      showSceneMessage({ message: payload.message, duration: payload.duration, speed: payload.speed });
+      showSceneMessage({ message: payload.message, duration: payload.duration });
     });
 
     const mod = game.modules.get(MOD);
@@ -195,6 +175,4 @@
       mod.api.showCarringtonMessage = showSceneMessage;
     }
   });
-
-  Hooks.on("renderChatLog", injectChatButton);
 })();

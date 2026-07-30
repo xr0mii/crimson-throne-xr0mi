@@ -140,6 +140,117 @@
   background: transparent;
 }
 
+.bp-target {
+  display: grid;
+  gap: 2px;
+  color: rgba(75,16,18,.72);
+  font-size: 10px;
+  text-align: center;
+}
+
+.bp-target select {
+  height: 28px;
+  border: 1px solid rgba(140,27,27,.28);
+  border-radius: 5px;
+  background: #fffaf0;
+  color: var(--bp-red-dark);
+}
+
+.bp-gm-panel {
+  border-style: dashed;
+  background: rgba(255,247,226,.68);
+}
+
+.bp-pig-summary {
+  display: grid;
+  grid-template-columns: 62px 1fr auto;
+  gap: 11px;
+  align-items: center;
+}
+
+.bp-pig-summary > img,
+.bp-pig-placeholder {
+  width: 62px;
+  height: 62px;
+  border: 2px solid rgba(140,27,27,.3);
+  border-radius: 10px;
+  background: rgba(255,255,255,.55);
+}
+
+.bp-pig-summary > img {
+  object-fit: cover;
+}
+
+.bp-pig-placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--bp-red);
+  font-size: 27px;
+}
+
+.bp-pig-summary__status {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 9px;
+}
+
+.bp-pig-summary__status span {
+  color: rgba(36,21,18,.58);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.bp-pig-summary__status strong {
+  color: var(--bp-red-dark);
+}
+
+.bp-pig-badge {
+  padding: 5px 8px;
+  color: #fff9e9;
+  border-radius: 999px;
+  background: var(--bp-red);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.bp-acting {
+  margin: 0 0 8px;
+  color: rgba(36,21,18,.72);
+  font-size: 12px;
+}
+
+.bp-actions--primary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bp-actions--primary .bp-btn {
+  position: relative;
+  min-height: 38px;
+  padding-right: 32px;
+  text-align: left;
+}
+
+.bp-action-cost {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 10px;
+  transform: translateY(-50%);
+}
+
+.bp-actions--secondary {
+  margin-top: 8px;
+}
+
 .bp-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -328,5 +439,14 @@
 
   .bp-location .bp-btn {
     grid-column: span 1;
+  }
+
+  .bp-pig-summary {
+    grid-template-columns: 52px 1fr;
+  }
+
+  .bp-pig-badge {
+    grid-column: 1 / -1;
+    justify-self: start;
   }
 }

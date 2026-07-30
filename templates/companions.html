@@ -1,0 +1,221 @@
+<section class="ct-companions {{#if isGM}}is-gm{{else}}is-player{{/if}}">
+  <header class="cp-hero">
+    <div class="cp-hero__mark"><i class="fas fa-people-group"></i></div>
+    <div>
+      <span class="cp-kicker">Союзники партии</span>
+      <h2>Спутники</h2>
+      <p>{{#if isGM}}Создавай карточки поддержки из любых актёров и управляй их состоянием.{{else}}Каждый спутник может помочь один раз за раунд. Давление боя может поставить его под угрозу.{{/if}}</p>
+    </div>
+    {{#if isGM}}
+      <button type="button" class="cp-btn cp-btn--gold cp-show-players"><i class="fas fa-users-viewfinder"></i> Показать игрокам</button>
+    {{/if}}
+  </header>
+
+  {{#if isGM}}
+    <nav class="cp-toolbar">
+      <span><i class="fas fa-rotate"></i> Сбросить ресурсы</span>
+      <button type="button" class="cp-btn cp-reset-round">Новый раунд</button>
+      <button type="button" class="cp-btn cp-reset-encounter">Новое столкновение</button>
+      <button type="button" class="cp-btn cp-reset-day">Новый день</button>
+    </nav>
+
+    <div class="cp-admin">
+      <aside class="cp-sidebar">
+        <div class="cp-dropzone">
+          <i class="fas fa-user-plus"></i>
+          <strong>Перетащи актёра</strong>
+          <span>Из вкладки актёров или со сцены</span>
+          {{#if selectedToken}}
+            <button type="button" class="cp-btn cp-add-selected"><i class="fas fa-crosshairs"></i> Добавить: {{selectedToken.name}}</button>
+          {{/if}}
+        </div>
+
+        <div class="cp-roster">
+          {{#each companions}}
+            <button type="button" class="cp-roster-card cp-select {{#if isSelected}}is-selected{{/if}} {{#unless visible}}is-hidden{{/unless}}" data-companion-id="{{id}}">
+              <img src="{{img}}" alt="">
+              <span><strong>{{name}}</strong><small class="is-{{statusKey}}"><i class="fas {{statusIcon}}"></i> {{statusLabel}}</small></span>
+              {{#if exposed}}<i class="fas fa-eye cp-roster-card__exposed" title="Под угрозой"></i>{{/if}}
+            </button>
+          {{else}}
+            <p class="cp-empty-small">В панели пока никого нет.</p>
+          {{/each}}
+        </div>
+      </aside>
+
+      <main class="cp-editor">
+        {{#if selected}}
+          <section class="cp-editor-card cp-identity">
+            <div class="cp-portrait-editor">
+              <button type="button" class="cp-image-picker cp-pick-companion-image" data-companion-id="{{selected.id}}" title="Выбрать портрет в файловом браузере Foundry">
+                <img src="{{selected.img}}" alt="{{selected.name}}"><span><i class="fas fa-images"></i> Выбрать</span>
+              </button>
+              <button type="button" class="cp-icon-btn cp-open-actor" data-companion-id="{{selected.id}}" title="Открыть лист актёра"><i class="fas fa-up-right-from-square"></i></button>
+            </div>
+            <div class="cp-identity__fields">
+              <label class="cp-field cp-field--wide"><span>Имя на карточке</span><input type="text" class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="name" value="{{selected.name}}"></label>
+              <div class="cp-identity__buttons">
+                <button type="button" class="cp-btn cp-sync-actor" data-companion-id="{{selected.id}}"><i class="fas fa-arrows-rotate"></i> Обновить из актёра</button>
+                <button type="button" class="cp-btn cp-btn--danger cp-delete-companion" data-companion-id="{{selected.id}}"><i class="fas fa-trash"></i> Удалить карточку</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="cp-editor-card cp-state-editor">
+            <div>
+              <span class="cp-section-label">Состояние</span>
+              <div class="cp-status-line">
+                <strong class="is-{{selected.statusKey}}"><i class="fas {{selected.statusIcon}}"></i> {{selected.statusLabel}}</strong>
+                <strong class="cp-activation-state {{#if selected.activationUsed}}is-spent{{else}}is-ready{{/if}}"><i class="fas fa-bolt"></i> {{selected.activationLabel}}</strong>
+                <div class="cp-wounds">
+                  {{#each selected.woundPips}}<i class="{{#if filled}}is-filled{{/if}}"></i>{{/each}}
+                </div>
+                <button type="button" class="cp-icon-btn cp-wound" data-companion-id="{{selected.id}}" data-delta="-1" title="Убрать ранение"><i class="fas fa-minus"></i></button>
+                <button type="button" class="cp-icon-btn cp-wound" data-companion-id="{{selected.id}}" data-delta="1" title="Добавить ранение"><i class="fas fa-plus"></i></button>
+              </div>
+            </div>
+            <label class="cp-field cp-field--small"><span>Предел ранений</span><input type="number" min="1" max="6" class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="maxWounds" value="{{selected.maxWounds}}"></label>
+            <label class="cp-field"><span>Доверие</span><select class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="trust">{{#each selected.trustOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}} · {{label}}</option>{{/each}}</select></label>
+            {{#unless selected.hasMembers}}<button type="button" class="cp-btn cp-add-member" data-companion-id="{{selected.id}}"><i class="fas fa-users"></i> Добавить состав</button>{{/unless}}
+            {{#if selected.threatPending}}
+              <div class="cp-hit-controls">
+                <button type="button" class="cp-btn cp-btn--danger cp-resolve-hit" data-companion-id="{{selected.id}}"><i class="fas fa-burst"></i> Разрешить: {{selected.pendingThreatLabel}}</button>
+                <button type="button" class="cp-icon-btn cp-cancel-hit" data-companion-id="{{selected.id}}" title="Отменить объявленную атаку"><i class="fas fa-xmark"></i></button>
+              </div>
+            {{else}}
+              <div class="cp-hit-controls">
+                <button type="button" class="cp-btn cp-announce-hit" data-companion-id="{{selected.id}}" data-hit-type="collateral" data-wounds="1" {{#unless selected.canCollateral}}disabled{{/unless}} title="Уже применённый массовый эффект или опасность сцены"><i class="fas fa-fire"></i> Побочный эффект</button>
+                <button type="button" class="cp-btn cp-btn--danger cp-announce-hit" data-companion-id="{{selected.id}}" data-hit-type="direct" data-wounds="1" title="Враг тратит 1 действие; состояние «Под угрозой» не требуется"><i class="fas fa-crosshairs"></i> Прямая атака {{selected.directAttackGlyph}}</button>
+              </div>
+            {{/if}}
+            <label class="cp-toggle"><input type="checkbox" class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="visible" {{#if selected.visible}}checked{{/if}}><span>Показывать игрокам</span></label>
+            <label class="cp-toggle"><input type="checkbox" class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="exposed" {{#if selected.exposed}}checked{{/if}}><span>Под угрозой</span></label>
+            <label class="cp-toggle"><input type="checkbox" class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="evacuated" {{#if selected.evacuated}}checked{{/if}}><span>Эвакуирован</span></label>
+            <label class="cp-toggle cp-toggle--danger"><input type="checkbox" class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="dead" {{#if selected.dead}}checked{{/if}}><span>Погиб</span></label>
+          </section>
+
+          {{#if selected.hasMembers}}
+            <section class="cp-editor-card cp-members-editor">
+              <header><div><span class="cp-section-label">Состав отряда</span><h3>Участники · {{selected.aliveMembers}} в строю</h3></div><button type="button" class="cp-btn cp-add-member" data-companion-id="{{selected.id}}"><i class="fas fa-user-plus"></i> Добавить</button></header>
+              {{#if selected.casualtyPending}}<p class="cp-casualty-warning"><i class="fas fa-skull"></i> Смертельный удар: выбери погибшего участника.</p>{{/if}}
+              <div class="cp-member-list">
+                {{#each selected.members}}
+                  <div class="cp-member {{#if dead}}is-dead{{/if}}">
+                    <span><i class="fas {{#if dead}}fa-skull{{else}}fa-user-shield{{/if}}"></i><input type="text" class="cp-member-field" data-companion-id="{{../selected.id}}" data-member-id="{{id}}" data-field="name" value="{{name}}"><small>{{statusLabel}}</small></span>
+                    {{#if dead}}
+                      <button type="button" class="cp-icon-btn cp-member-death" data-companion-id="{{../selected.id}}" data-member-id="{{id}}" data-dead="false" title="Вернуть участника"><i class="fas fa-rotate-left"></i></button>
+                    {{else}}
+                      {{#if ../selected.casualtyPending}}<button type="button" class="cp-btn cp-btn--danger cp-member-death" data-companion-id="{{../selected.id}}" data-member-id="{{id}}" data-dead="true"><i class="fas fa-skull"></i> Выбрать</button>{{/if}}
+                    {{/if}}
+                    {{#unless ../selected.casualtyPending}}<button type="button" class="cp-icon-btn cp-delete-member" data-companion-id="{{../selected.id}}" data-member-id="{{id}}" title="Удалить участника"><i class="fas fa-trash"></i></button>{{/unless}}
+                  </div>
+                {{/each}}
+              </div>
+            </section>
+          {{/if}}
+
+          <section class="cp-editor-card cp-notes-editor">
+            <label class="cp-field"><span>Описание для игроков</span><textarea rows="4" class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="description" placeholder="Кто этот спутник и чем он помогает партии…">{{selected.description}}</textarea></label>
+            <label class="cp-field"><span>Заметки мастера</span><textarea rows="4" class="cp-companion-field" data-companion-id="{{selected.id}}" data-field="gmNotes" placeholder="Скрытые условия, мотивы и напоминания…">{{selected.gmNotes}}</textarea></label>
+          </section>
+
+          <section class="cp-abilities-editor">
+            <header>
+              <div><span class="cp-section-label">Действия поддержки</span><h3>Способности</h3></div>
+              <button type="button" class="cp-btn cp-btn--gold cp-add-ability" data-companion-id="{{selected.id}}"><i class="fas fa-plus"></i> Добавить способность</button>
+            </header>
+
+            {{#each selected.abilities}}
+              <article class="cp-ability-editor {{#unless enabled}}is-disabled{{/unless}}">
+                <header>
+                  <button type="button" class="cp-image-picker cp-image-picker--ability cp-pick-ability-image" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" title="Выбрать иконку в файловом браузере Foundry">
+                    <img src="{{img}}" alt=""><span><i class="fas fa-images"></i></span>
+                  </button>
+                  <label class="cp-field cp-field--grow"><span>Название</span><input type="text" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="name" value="{{name}}"></label>
+                  <button type="button" class="cp-icon-btn cp-move-ability" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-delta="-1" title="Выше"><i class="fas fa-arrow-up"></i></button>
+                  <button type="button" class="cp-icon-btn cp-move-ability" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-delta="1" title="Ниже"><i class="fas fa-arrow-down"></i></button>
+                  <button type="button" class="cp-icon-btn cp-icon-btn--danger cp-delete-ability" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" title="Удалить"><i class="fas fa-trash"></i></button>
+                </header>
+
+                <div class="cp-ability-editor__grid">
+                  <label class="cp-field"><span>Стоимость</span><select class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="actionType">{{#each actionOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                  <label class="cp-field"><span>Частота</span><select class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="frequency">{{#each frequencyOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                  <label class="cp-field"><span>Применений</span><input type="number" min="1" max="20" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="maxUses" value="{{maxUses}}"></label>
+                  <label class="cp-field"><span>Требуемое доверие</span><select class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="minTrust">{{#each trustOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}} · {{label}}</option>{{/each}}</select></label>
+                  {{#if ../selected.hasMembers}}<label class="cp-field"><span>Исполнитель</span><select class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="memberId">{{#each memberOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>{{/if}}
+                  {{#if ../selected.hasMembers}}<label class="cp-field"><span>Минимум живых в отряде</span><input type="number" min="0" max="6" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="minLivingMembers" value="{{minLivingMembers}}"></label>{{/if}}
+                  <label class="cp-field cp-field--damage"><span>Формула урона — необязательно</span><input type="text" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="damageFormula" value="{{damageFormula}}" placeholder="Например: 2d6+8"></label>
+                  <label class="cp-field"><span>Тип урона</span><select class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="damageType">{{#each damageTypeOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                  <p class="cp-damage-help"><i class="fas fa-circle-info"></i> В формуле достаточно указать кости и модификатор. Если вставить <code>@Damage[2d6[piercing]]</code>, оболочка и тип будут распознаны автоматически.</p>
+                  <label class="cp-field"><span>Автоматические цели</span><select class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="automation.targetMode">{{#each targetOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                  <div class="cp-effect-dropzone {{#if hasAutomationEffect}}has-effect{{/if}}" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    <span>{{#if hasAutomationEffect}}<strong>{{automationEffectLabel}}</strong><small>Эффект будет добавлен выбранным целям</small>{{else}}<strong>Перетащи сюда эффект PF2e</strong><small>Из библиотеки или листа актёра</small>{{/if}}</span>
+                    {{#if hasAutomationEffect}}<button type="button" class="cp-icon-btn cp-remove-ability-effect" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" title="Убрать привязанный эффект"><i class="fas fa-xmark"></i></button>{{/if}}
+                  </div>
+                </div>
+
+                <label class="cp-field"><span>Описание и правила</span><textarea rows="5" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="description" placeholder="Поддерживаются @Check[…], @Damage[…] и UUID-ссылки Foundry…">{{description}}</textarea></label>
+
+                <footer>
+                  <label class="cp-toggle"><input type="checkbox" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="enabled" {{#if enabled}}checked{{/if}}><span>Включена</span></label>
+                  <label class="cp-toggle"><input type="checkbox" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="showToPlayers" {{#if showToPlayers}}checked{{/if}}><span>Видна игрокам</span></label>
+                  <label class="cp-toggle"><input type="checkbox" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="playerUsable" {{#if playerUsable}}checked{{/if}}><span>Игроки могут применять</span></label>
+                  <label class="cp-toggle"><input type="checkbox" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="exposeOnUse" {{#if exposeOnUse}}checked{{/if}}><span>Оставляет под угрозой</span></label>
+                  <label class="cp-toggle"><input type="checkbox" class="cp-ability-field" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" data-field="hideUntilUnlocked" {{#if hideUntilUnlocked}}checked{{/if}}><span>Скрывать до открытия</span></label>
+                  <button type="button" class="cp-btn cp-use-ability" data-companion-id="{{../selected.id}}" data-ability-id="{{id}}" {{#unless canUse}}disabled{{/unless}}><i class="fas fa-play"></i> Применить</button>
+                </footer>
+              </article>
+            {{else}}
+              <p class="cp-empty-editor">У спутника пока нет действий поддержки.</p>
+            {{/each}}
+          </section>
+        {{else}}
+          <div class="cp-empty-editor cp-empty-editor--large"><i class="fas fa-people-pulling"></i><h3>Добавь первого спутника</h3><p>Перетащи сюда любого актёра. Система не требует специального статблока.</p></div>
+        {{/if}}
+      </main>
+    </div>
+  {{else}}
+    {{#if hasVisibleCompanions}}
+      <div class="cp-player-grid">
+        {{#each visibleCompanions}}
+          <article class="cp-card is-{{statusKey}} {{#if exposed}}is-exposed{{/if}}">
+            <header class="cp-card__header">
+              <img src="{{img}}" alt="{{name}}">
+              <div><span class="cp-card__eyebrow">Спутник</span><h3>{{name}}</h3><small class="is-{{statusKey}}"><i class="fas {{statusIcon}}"></i> {{statusLabel}}</small></div>
+              {{#if exposed}}<span class="cp-exposed"><i class="fas fa-eye"></i> Под угрозой</span>{{/if}}
+            </header>
+
+            <div class="cp-card__condition cp-card__activation {{#if activationUsed}}is-spent{{/if}}">
+              <span><i class="fas fa-bolt"></i> Помощь в этом раунде</span><strong>{{activationLabel}}</strong>
+            </div>
+            <div class="cp-card__condition">
+              <span>Ранения</span><div class="cp-wounds">{{#each woundPips}}<i class="{{#if filled}}is-filled{{/if}}"></i>{{/each}}</div>
+            </div>
+            <div class="cp-card__condition"><span>Доверие</span><strong>{{trustLabel}}</strong></div>
+            {{#if hasMembers}}<div class="cp-public-members">{{#each members}}<span class="{{#if dead}}is-dead{{/if}}"><i class="fas {{#if dead}}fa-skull{{else}}fa-user-shield{{/if}}"></i> {{name}}</span>{{/each}}</div>{{/if}}
+            {{#if canProtect}}<div class="cp-danger-actions"><p><i class="fas fa-triangle-exclamation"></i> Объявлено: <strong>{{pendingThreatLabel}}</strong>. Если её не отразить, спутник получит {{pendingWoundsLabel}}.</p><button type="button" class="cp-btn cp-protect" data-companion-id="{{id}}"><i class="fas fa-shield"></i> Заслонить собой ↶</button></div>{{/if}}
+            {{#if canEvacuate}}<div class="cp-danger-actions"><p><i class="fas fa-heart-crack"></i> Ещё одна угроза станет смертельной.</p><button type="button" class="cp-btn cp-evacuate" data-companion-id="{{id}}"><i class="fas fa-person-walking-arrow-right"></i> Эвакуировать ◆◆</button></div>{{/if}}
+            {{#if descriptionHtml}}<div class="cp-card__description">{{{descriptionHtml}}}</div>{{/if}}
+
+            <div class="cp-card__abilities">
+              {{#each abilities}}
+                <section class="cp-public-ability {{#unless canUse}}is-unavailable{{/unless}} {{#unless unlocked}}is-locked{{/unless}}">
+                  <div class="cp-public-ability__heading"><img src="{{img}}" alt=""><div><h4>{{name}} <small>{{actionGlyph}}</small></h4><span>{{memberName}} · {{actionLabel}} · {{useLabel}}</span></div></div>
+                  {{#if descriptionHtml}}<div class="cp-public-ability__description">{{{descriptionHtml}}}</div>{{/if}}
+                  {{#if requiresTargets}}<p class="cp-target-hint"><i class="fas fa-bullseye"></i> Перед применением отметь {{targetInstruction}} инструментом целей Foundry.</p>{{/if}}
+                  {{#if exposeOnUse}}<p class="cp-risk"><i class="fas fa-eye"></i> После применения спутник окажется под угрозой.</p>{{/if}}
+                  {{#unless isPassive}}<button type="button" class="cp-btn cp-btn--ability cp-use-ability" data-companion-id="{{../id}}" data-ability-id="{{id}}" {{#unless canUse}}disabled{{/unless}}><i class="fas fa-hand-sparkles"></i> {{activationLabel}}</button>{{/unless}}
+                </section>
+              {{else}}
+                <p class="cp-empty-small">Сейчас этот спутник не может оказать особую помощь.</p>
+              {{/each}}
+            </div>
+          </article>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="cp-player-empty"><i class="fas fa-campground"></i><h3>Рядом нет доступных спутников</h3><p>Когда союзник присоединится к партии, его карточка появится здесь.</p></div>
+    {{/if}}
+  {{/if}}
+</section>

@@ -1,0 +1,149 @@
+<section class="ct-sredna">
+  <header class="sr-hero">
+    <div>
+      <span class="sr-kicker">Шоантийское испытание</span>
+      <h2>Средна</h2>
+      <p>Одна кожаная петля. Два несгибаемых взгляда. Ни шага вперёд.</p>
+    </div>
+    <div class="sr-round">
+      {{#if isSetup}}Подготовка{{else}}{{#if isFinished}}Итог{{else}}Раунд <strong>{{state.round}}</strong>{{/if}}{{/if}}
+    </div>
+  </header>
+
+  {{#if isSetup}}
+    <section class="sr-setup">
+      {{#each participants}}
+        <article class="sr-setup-card sr-dropzone {{#unless assigned}}is-empty{{/unless}}" data-side="{{side}}">
+          <div class="sr-setup-portrait">
+            <img src="{{img}}" alt="{{name}}" />
+            {{#if ../isGM}}{{#if assigned}}<button type="button" class="sr-clear-actor" data-side="{{side}}" title="Убрать участника"><i class="fas fa-xmark"></i></button>{{/if}}{{/if}}
+          </div>
+          <div class="sr-setup-card__body">
+            {{#if assigned}}
+              <span class="sr-slot-label">{{#if isLeft}}Левый участник{{else}}Правый участник{{/if}}</span>
+              <h3>{{name}}</h3>
+            {{else}}
+              <span class="sr-slot-label">{{#if isLeft}}Левый участник{{else}}Правый участник{{/if}}</span>
+              <h3>Перетащи актёра сюда</h3>
+              <p>Из вкладки актёров или прямо со сцены.</p>
+            {{/if}}
+            {{#if ../isGM}}{{#if ../selectedToken}}
+              <button type="button" class="sr-btn sr-btn--quiet sr-use-token" data-side="{{side}}"><i class="fas fa-crosshairs"></i> {{../selectedToken.name}}</button>
+            {{/if}}{{/if}}
+            {{#if assigned}}{{#if ../isGM}}
+            <div class="sr-stats">
+              <label>Запугивание<input class="sr-stat" data-side="{{side}}" data-stat="intimidation" type="number" value="{{stats.intimidation}}" /></label>
+              <label>СЛ Воли<input class="sr-stat" data-side="{{side}}" data-stat="will" type="number" value="{{stats.will}}" /></label>
+              <label>Атлетика<input class="sr-stat" data-side="{{side}}" data-stat="athletics" type="number" value="{{stats.athletics}}" /></label>
+              <label>Стойкость<input class="sr-stat" data-side="{{side}}" data-stat="fortitude" type="number" value="{{stats.fortitude}}" /></label>
+            </div>
+            {{/if}}{{/if}}
+          </div>
+        </article>
+      {{/each}}
+    </section>
+
+    {{#if isGM}}
+    <section class="sr-options">
+      <span>Участники назначаются перетаскиванием. Показатели можно поправить перед началом.</span>
+      <label class="sr-dc">Базовая СЛ выдержки <input type="number" class="sr-base-dc" value="{{state.baseEnduranceDC}}" /></label>
+    </section>
+    {{else}}
+      <p class="sr-spectator-note"><i class="fas fa-eye"></i> Мастер готовит участников поединка.</p>
+    {{/if}}
+    <div class="sr-main-actions">
+      {{#if isGM}}
+      <button type="button" class="sr-btn sr-btn--primary sr-start"><i class="fas fa-link"></i> Затянуть петлю</button>
+      {{/if}}
+      <button type="button" class="sr-btn sr-post-rules"><i class="fas fa-scroll"></i> Правила в чат</button>
+    </div>
+  {{else}}
+    <section class="sr-arena">
+      {{#each participants}}
+        <article class="sr-fighter {{#if raging}}is-raging{{/if}}">
+          <div class="sr-fighter__portrait"><img src="{{img}}" alt="{{name}}" />{{#if raging}}<i class="fas fa-fire"></i>{{/if}}</div>
+          <h3>{{name}}</h3>
+          <div class="sr-pressure"><span>Очки давления</span><strong>{{pressure}}</strong></div>
+          {{#if ../isGM}}<div class="sr-compact-stats"><span>Зап. <b>{{stats.intimidation}}</b></span><span>Атл. <b>{{stats.athletics}}</b></span><span>Ст. <b>{{stats.fortitude}}</b></span></div>{{/if}}
+
+          {{#if ../isChoices}}
+            {{#if choiceMade}}
+              <div class="sr-locked"><i class="fas fa-lock"></i> Выбор сделан</div>
+              {{#if ../isGM}}{{#unless ../bothLocked}}<button type="button" class="sr-link sr-unlock" data-side="{{side}}">изменить</button>{{/unless}}{{/if}}
+            {{else}}
+              {{#if canControl}}
+              <div class="sr-choices">
+                <button type="button" class="sr-choice sr-choice--tug" data-side="{{side}}" data-choice="tug"><i class="fas fa-hand-fist"></i><span>Рывок<small>Атлетика против СЛ Стойкости</small></span></button>
+                <button type="button" class="sr-choice sr-choice--dig" data-side="{{side}}" data-choice="dig"><i class="fas fa-shield-halved"></i><span>Упереться<small>+2 к защите и выдержке</small></span></button>
+              </div>
+              {{else}}
+                <div class="sr-locked"><i class="fas fa-hourglass-half"></i> Участник выбирает</div>
+              {{/if}}
+            {{/if}}
+          {{/if}}
+
+          {{#if rollRequired}}
+            {{#if rollSubmitted}}
+              <div class="sr-locked"><i class="fas fa-dice-d20"></i> Бросок сделан</div>
+            {{else}}
+              {{#if canRoll}}
+                <button type="button" class="sr-btn sr-btn--roll sr-roll" data-side="{{side}}" data-kind="{{rollKind}}"><i class="fas fa-dice-d20"></i> Бросить: {{rollLabel}}</button>
+              {{else}}
+                <div class="sr-locked"><i class="fas fa-hourglass-half"></i> Ожидается бросок</div>
+              {{/if}}
+            {{/if}}
+          {{/if}}
+
+          {{#if canRage}}<button type="button" class="sr-btn sr-btn--rage sr-rage" data-side="{{side}}"><i class="fas fa-fire"></i> Впасть в Ярость</button>{{/if}}
+          {{#if canControl}}{{#unless ../isFinished}}<button type="button" class="sr-link sr-yield" data-side="{{side}}">склонить голову</button>{{/unless}}{{/if}}
+        </article>
+      {{/each}}
+      <div class="sr-strap"><span></span></div>
+    </section>
+
+    {{#if isBreath}}
+      <section class="sr-phase-card">
+        <span class="sr-phase-card__count">{{state.round}}</span>
+        <div><h3>{{state.round}}-й вдох</h3><p>Каждый участник лично бросает Запугивание.</p></div>
+      </section>
+    {{/if}}
+
+    {{#if isChoices}}
+      <div class="sr-main-actions">
+        {{#if isGM}}{{#if bothLocked}}<button type="button" class="sr-btn sr-btn--primary sr-reveal"><i class="fas fa-eye"></i> Вскрыть выбор</button>{{else}}<span class="sr-waiting">Оба участника выбирают тайно.</span>{{/if}}{{else}}<span class="sr-waiting">Выбор вскроет Мастер, когда оба участника будут готовы.</span>{{/if}}
+      </div>
+    {{/if}}
+
+    {{#if isAthletics}}
+      <section class="sr-phase-card">
+        <span class="sr-phase-card__count"><i class="fas fa-hand-fist"></i></span>
+        <div><h3>Рывок</h3><p>Совершившие Рывок лично бросают Атлетику.</p></div>
+      </section>
+    {{/if}}
+
+    {{#if isFortitude}}
+      <section class="sr-phase-card">
+        <span class="sr-phase-card__count"><i class="fas fa-shield-halved"></i></span>
+        <div><h3>Выдержать петлю</h3><p>Оба участника лично бросают Стойкость.</p></div>
+      </section>
+    {{/if}}
+
+    {{#if isFinished}}
+      <section class="sr-result">
+        <span class="sr-result__ornament">◆</span>
+        <h2>{{state.result.winnerName}}</h2>
+        <p>{{state.result.reason}}</p>
+      </section>
+    {{/if}}
+
+    <section class="sr-log">
+      <h3>Ход поединка</h3>
+      {{#each state.log}}<article class="is-{{tone}}"><strong>{{title}}</strong><span>{{text}}</span></article>{{else}}<p>Петля ещё не натянулась.</p>{{/each}}
+    </section>
+
+    <div class="sr-footer-actions">
+      <button type="button" class="sr-btn sr-post-rules"><i class="fas fa-scroll"></i> Правила в чат</button>
+      {{#if isGM}}<button type="button" class="sr-btn sr-btn--quiet sr-reset"><i class="fas fa-rotate-left"></i> Новая игра</button>{{/if}}
+    </div>
+  {{/if}}
+</section>

@@ -1,7 +1,7 @@
 {
   "id": "crimson-throne-xr0mi",
   "title": "xr0mi-adv: Проклятие Багряного Трона",
-  "version": "3.1.15",
+  "version": "3.7.1",
   "socket": true,
   "compatibility": {
     "minimum": "13",
@@ -22,7 +22,9 @@
     "styles/ct-adventure-importer.css",
     "styles/harrow-tracker.css",
     "styles/blood-pig.css",
-    "styles/carrington-board.css"
+    "styles/carrington-board.css",
+    "styles/sredna.css",
+    "styles/companions.css"
   ],
   "scripts": [
     "scripts/ct-foundry-compat.js",
@@ -30,7 +32,9 @@
     "scripts/ct-adventure-importer.js",
     "scripts/harrow-tracker.js",
     "scripts/blood-pig.js",
-    "scripts/carrington-board.js"
+    "scripts/carrington-board.js",
+    "scripts/sredna.js",
+    "scripts/companions.js"
   ],
   "manifest": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/module.json",
   "download": "https://github.com/xr0mii/crimson-throne-xr0mi/archive/refs/heads/main.zip",
@@ -59,7 +63,7 @@
         "type": "system",
         "compatibility": {
           "minimum": "7.8.0",
-          "verified": "8.2.0"
+          "verified": "8.3.0"
         }
       }
     ],
