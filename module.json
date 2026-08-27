@@ -1,7 +1,7 @@
 {
   "id": "crimson-throne-xr0mi",
   "title": "xr0mi-adv: Проклятие Багряного Трона",
-  "version": "3.7.1",
+  "version": "3.10.0",
   "socket": true,
   "compatibility": {
     "minimum": "13",
@@ -24,7 +24,8 @@
     "styles/blood-pig.css",
     "styles/carrington-board.css",
     "styles/sredna.css",
-    "styles/companions.css"
+    "styles/companions.css",
+    "styles/korvosa-settlement.css"
   ],
   "scripts": [
     "scripts/ct-foundry-compat.js",
@@ -34,7 +35,8 @@
     "scripts/blood-pig.js",
     "scripts/carrington-board.js",
     "scripts/sredna.js",
-    "scripts/companions.js"
+    "scripts/companions.js",
+    "scripts/korvosa-settlement.js"
   ],
   "manifest": "https://raw.githubusercontent.com/xr0mii/crimson-throne-xr0mi/main/module.json",
   "download": "https://github.com/xr0mii/crimson-throne-xr0mi/archive/refs/heads/main.zip",
@@ -85,6 +87,24 @@
         "id": "ru-ru",
         "type": "module",
         "manifest": "https://github.com/phenomen/foundry-vtt-ru/releases/download/latest/module.json",
+        "compatibility": {}
+      },
+      {
+        "id": "pf2e-tokens-monster-core",
+        "type": "module",
+        "reason": "Официальные портреты, обычные и динамические токены существ из Monster Core, на которые ссылаются материалы приключения.",
+        "compatibility": {}
+      },
+      {
+        "id": "pf2e-tokens-monster-core-2",
+        "type": "module",
+        "reason": "Официальные портреты, обычные и динамические токены существ из Monster Core 2, на которые ссылаются материалы приключения.",
+        "compatibility": {}
+      },
+      {
+        "id": "pf2e-tokens-bestiaries",
+        "type": "module",
+        "reason": "Официальные портреты, обычные и динамические токены существ из классических бестиариев, на которые ссылаются материалы приключения.",
         "compatibility": {}
       }
     ]

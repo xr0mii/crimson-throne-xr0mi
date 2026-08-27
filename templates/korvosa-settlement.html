@@ -1,0 +1,119 @@
+<section class="ks-shell">
+  <nav class="ks-location-tabs {{#unless canSeeBridgefront}}is-single{{/unless}}" aria-label="Рынок локации">
+    <button type="button" class="ks-location-tab {{#if isKorvosa}}is-active{{/if}}" data-location="korvosa"><i class="fas fa-city"></i><span>Корвоса<small>весь город</small></span></button>
+    {{#if canSeeBridgefront}}<button type="button" class="ks-location-tab {{#if isBridgefront}}is-active{{/if}}" data-location="bridgefront"><i class="fas fa-bridge"></i><span>Бриджфронт<small>карантинный район</small></span></button>{{/if}}
+  </nav>
+  <header class="ks-hero is-{{profile.tone}}">
+    <div class="ks-hero__shade"></div>
+    <div class="ks-hero__content">
+      <span class="ks-kicker">Рынки и услуги · текущая обстановка</span>
+      <h2>{{profile.name}}</h2>
+      <p>{{profile.event.public}}</p>
+      <div class="ks-status"><i class="fas fa-city"></i><span>{{profile.scopeLabel}}</span><strong>{{profile.label}}</strong></div>
+    </div>
+  </header>
+
+  {{#if isGM}}
+  <section class="ks-gm-panel">
+    <div class="ks-gm-panel__event">
+      {{#if isKorvosa}}
+      <label><span>Сюжетное состояние</span><select class="ks-event-select">
+        {{#each eventGroups}}<optgroup label="{{label}}">{{#each options}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</optgroup>{{/each}}
+      </select></label>
+      {{else}}
+      <span class="ks-gm-panel__label">Локальный профиль</span>
+      <strong>Кошмары Бриджфронта · группа 6–9 ур.</strong>
+      {{/if}}
+      <p><i class="fas fa-eye-slash"></i> {{profile.event.gm}}</p>
+      <label class="ks-visibility-toggle"><input class="ks-bridgefront-visibility" type="checkbox" {{#if state.bridgefrontUnlocked}}checked{{/if}}><span><i class="fas {{#if state.bridgefrontUnlocked}}fa-eye{{else}}fa-eye-slash{{/if}}"></i> Показывать вкладку Бриджфронта игрокам</span></label>
+    </div>
+    <details class="ks-overrides" {{#if hasOverrides}}open{{/if}}>
+      <summary><i class="fas fa-sliders"></i> Ручная поправка {{#if hasOverrides}}<b>активна</b>{{/if}}</summary>
+      <div class="ks-override-grid">
+        <label>Предел рынка<input class="ks-override" data-key="marketLevel" type="number" min="0" max="20" value="{{profile.marketLevel}}"></label>
+        <label>Без поисков<input class="ks-override" data-key="reliableLevel" type="number" min="0" max="20" value="{{profile.reliableLevel}}"></label>
+        <label>Заработок<input class="ks-override" data-key="earnIncomeLevel" type="number" min="0" max="20" value="{{profile.earnIncomeLevel}}"></label>
+        <label>Ранг услуг<input class="ks-override" data-key="spellRank" type="number" min="0" max="10" value="{{profile.spellRank}}"></label>
+        <label class="ks-check"><input class="ks-override" data-key="specialOrders" type="checkbox" {{#if profile.specialOrders}}checked{{/if}}><span>Спецзаказы</span></label>
+        {{#if isKorvosa}}<label class="ks-check"><input class="ks-override" data-key="oldKorvosaClosed" type="checkbox" {{#if profile.oldKorvosaClosed}}checked{{/if}}><span>Старая Корвоса отрезана</span></label>{{else}}<span class="ks-override-note"><i class="fas fa-shield-halved"></i> Оккультный и подпольный ассортимент ограничивается уровнем группы +1.</span>{{/if}}
+        <button type="button" class="ks-button ks-reset-overrides" {{#unless hasOverrides}}disabled{{/unless}}><i class="fas fa-rotate-left"></i> Сбросить</button>
+      </div>
+    </details>
+  </section>
+  {{/if}}
+
+  <section class="ks-metrics">
+    <article><i class="fas fa-store"></i><span>Предел рынка</span><strong>{{profile.marketLevel}}</strong><small>уровень обычных предметов</small></article>
+    <article><i class="fas fa-basket-shopping"></i><span>Надёжный запас</span><strong>{{profile.reliableLevel}}</strong><small>без отдельного поиска</small></article>
+    <article><i class="fas fa-hammer"></i><span>Заработок</span><strong>{{profile.earnIncomeLevel}}</strong><small>максимум задач «Заработать доход»</small></article>
+    <article><i class="fas fa-hands-praying"></i><span>Магические услуги</span><strong>{{profile.spellRank}}</strong><small>максимальный ранг заклинания</small></article>
+  </section>
+
+  {{#if isBridgefront}}
+  <section class="ks-local-caps">
+    <span><i class="fas fa-store"></i><b>Обычный рынок</b> до 6 ур.</span>
+    <span><i class="fas fa-book-skull"></i><b>Оккультное</b> до 8 ур.</span>
+    <span><i class="fas fa-prescription-bottle-medical"></i><b>Лекарства</b> до 8 ур.</span>
+    <span><i class="fas fa-user-secret"></i><b>Контрабанда</b> до 9 ур.</span>
+    <small>Фактический предел особого канала — не выше уровня группы +1.</small>
+  </section>
+  {{/if}}
+
+  <section class="ks-current">
+    <div class="ks-current__summary">
+      <div><span class="ks-section-label">Обстановка</span><h3>{{profile.label}}</h3></div>
+      <p>{{profile.summary}}</p>
+      <dl>
+        <div><dt>Спецзаказы</dt><dd>{{profile.ordersLabel}}</dd></div>
+        {{#if isKorvosa}}<div><dt>Старая Корвоса</dt><dd>{{profile.oldKorvosaLabel}}</dd></div>{{else}}<div><dt>Оплата</dt><dd>монета, бартер или услуга</dd></div>{{/if}}
+        <div><dt>Риск</dt><dd>{{profile.danger}}</dd></div>
+      </dl>
+    </div>
+    <div class="ks-qualities">
+      {{#each profile.qualities}}<article><i class="fas {{icon}}"></i><div><h4>{{title}}</h4><p>{{text}}</p></div></article>{{/each}}
+    </div>
+  </section>
+
+  <section class="ks-market">
+    <header>
+      <div><span class="ks-section-label">Проверка рынка</span><h3>Можно ли это купить?</h3></div>
+      {{#if query.name}}<button type="button" class="ks-icon-button ks-clear-item" title="Очистить предмет"><i class="fas fa-xmark"></i></button>{{/if}}
+    </header>
+    <div class="ks-dropzone {{#if query.name}}has-item{{/if}}">
+      {{#if query.name}}
+        <img src="{{query.img}}" alt=""><div><span>Выбранный товар</span><strong>{{query.name}}</strong><small>{{query.level}}-й уровень</small></div>
+      {{else}}
+        <i class="fas fa-box-open"></i><div><strong>Перетащите сюда товар</strong><small>Из библиотеки, листа персонажа или торговца. Поля ниже можно заполнить вручную.</small></div>
+      {{/if}}
+    </div>
+    <div class="ks-market-modes">
+      <span>Спрос на этот товар</span>
+      <div>{{#each marketModes}}<label class="is-{{value}}"><input class="ks-query-field" data-key="marketMode" type="radio" name="ks-market-mode" value="{{value}}" {{#if selected}}checked{{/if}}><span><i class="fas {{icon}}"></i> {{label}}</span></label>{{/each}}</div>
+    </div>
+    <div class="ks-query-grid">
+      <label class="ks-field ks-field--name"><span>Название</span><input class="ks-query-field" data-key="name" type="text" value="{{query.name}}" placeholder="Например, исцеляющее зелье"></label>
+      <label class="ks-field"><span>Уровень</span><input class="ks-query-field" data-key="level" type="number" min="0" max="20" value="{{query.level}}"></label>
+      <label class="ks-field"><span>Редкость</span><select class="ks-query-field" data-key="rarity">{{#each rarityOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+      <label class="ks-field"><span>Категория</span><select class="ks-query-field" data-key="category">{{#each categoryOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+      {{#if isKorvosa}}<label class="ks-field"><span>Где покупают</span><select class="ks-query-field" data-key="district">{{#each districtOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>{{else}}<label class="ks-field"><span>Где покупают</span><span class="ks-static-field"><i class="fas fa-bridge"></i> Бриджфронт</span></label>{{/if}}
+      <label class="ks-field ks-field--party"><span>Уровень группы</span><div><input class="ks-query-field" data-key="partyLevel" type="number" min="1" max="20" value="{{query.partyLevel}}"><button type="button" class="ks-sync-party-level" title="Взять максимальный уровень персонажей игроков"><i class="fas fa-users"></i></button></div></label>
+      <label class="ks-field"><span>Базовая цена, зм</span><input class="ks-query-field" data-key="priceGp" type="number" min="0" step="0.01" value="{{query.priceGp}}"></label>
+    </div>
+
+    {{#if result}}
+    <article class="ks-result is-{{result.tone}}">
+      <i class="fas {{result.icon}}"></i>
+      <div><span>Вердикт рынка</span><h3>{{result.title}}</h3><p>{{result.lead}}</p>{{#each result.notes}}<small><i class="fas fa-angle-right"></i> {{this}}</small>{{/each}}
+        {{#if result.market.tradable}}<div class="ks-price-result"><span><small>Покупка · {{result.market.buyPercent}}</small><strong>{{#if result.market.hasPrice}}{{result.market.buyPrice}}{{else}}цена × {{result.market.buyPercent}}{{/if}}</strong></span><span><small>Продажа · {{result.market.sellPercent}}</small><strong>{{#if result.market.hasPrice}}{{result.market.sellPrice}}{{else}}цена × {{result.market.sellPercent}}{{/if}}</strong></span></div>{{/if}}
+      </div>
+    </article>
+    {{else}}
+    <p class="ks-market__empty"><i class="fas fa-circle-info"></i> Выберите предмет или укажите его уровень, чтобы рассчитать доступность.</p>
+    {{/if}}
+  </section>
+
+  <footer class="ks-footer">
+    <p><strong>Правило торговли:</strong> базовая цена задаёт стоимость товара. Состояние города влияет на наличие, количество, срок, легальность и форму оплаты; бартер использует тот же денежный эквивалент.</p>
+    {{#if isGM}}<div><button type="button" class="ks-button ks-post-chat"><i class="fas fa-message"></i> Профиль в чат</button><button type="button" class="ks-button ks-button--primary ks-show-players"><i class="fas fa-users-viewfinder"></i> Показать игрокам</button></div>{{/if}}
+  </footer>
+</section>
